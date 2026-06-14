@@ -1,0 +1,230 @@
+/* WordGame.css - стили для мини-игры */
+
+.mini-game-full-section {
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  backdrop-filter: blur(2px);
+  border-radius: 32px;
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid rgba(255,215,0,0.3);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.section-title-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.game-start-btn {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: none;
+  padding: 12px 28px;
+  border-radius: 40px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(255,215,0,0.4);
+}
+
+.game-start-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255,215,0,0.6);
+}
+
+.game-container {
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
+  border-radius: 28px;
+  padding: 20px;
+  border: 2px solid rgba(255,215,0,0.5);
+}
+
+.game-stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 20px;
+  margin-bottom: 15px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.game-stat {
+  color: #FFD700;
+  text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.game-area {
+  position: relative;
+  height: 500px;
+  background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 3px solid #FFD700;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.1);
+}
+
+.falling-block {
+  position: absolute;
+  width: 100px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 16px;
+  padding: 8px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.05s linear;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  animation: glow 0.8s infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+  to { box-shadow: 0 0 20px rgba(255,215,0,0.8); }
+}
+
+.correct-block {
+  background: linear-gradient(135deg, #a8e6cf, #d4f1f9);
+  border-left: 5px solid #2ecc71;
+}
+
+.wrong-block {
+  background: linear-gradient(135deg, #ffb3ba, #ffd3b6);
+  border-left: 5px solid #e74c3c;
+  text-decoration: line-through;
+  filter: grayscale(0.3);
+}
+
+.vip-block {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border-left: 5px solid #fff;
+  animation: vipPulse 0.5s infinite alternate;
+}
+
+@keyframes vipPulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); background: gold; }
+}
+
+.block-russian {
+  font-size: 0.8rem;
+  color: #555;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.block-english {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.game-character {
+  position: absolute;
+  bottom: 10px;
+  width: 80px;
+  transition: left 0.1s linear;
+  z-index: 10;
+}
+
+.character-img {
+  width: 100%;
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.3));
+  transition: transform 0.1s;
+}
+
+.catch-area {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: rgba(255,215,0,0.2);
+  border-radius: 50%;
+}
+
+.game-controls-info {
+  text-align: center;
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 20px;
+  font-weight: bold;
+  color: #FFD700;
+}
+
+.game-tutorial {
+  display: flex;
+  gap: 20px;
+  background: rgba(0,0,0,0.8);
+  border-radius: 30px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 2px solid #FFD700;
+}
+
+.tutorial-avatar img {
+  width: 80px;
+  border-radius: 50%;
+  border: 3px solid gold;
+}
+
+.tutorial-text {
+  color: white;
+  flex: 1;
+}
+
+.correct-highlight {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.wrong-highlight {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.game-result {
+  display: flex;
+  gap: 20px;
+  background: linear-gradient(135deg, #2c3e50, #1a1a2e);
+  border-radius: 30px;
+  padding: 25px;
+  margin-top: 20px;
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-avatar img {
+  width: 100px;
+  border-radius: 50%;
+  border: 4px solid gold;
+}
+
+.result-message {
+  flex: 1;
+  color: white;
+}
+
+.game-again-btn {
+  background: #FFD700;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 30px;
+  margin-top: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.game-again-btn:hover {
+  transform: scale(1.05);
+  background: #FFA500;
+}

@@ -1,0 +1,256 @@
+[
+  {
+    "level": 1,
+    "name": "Алфавит: основа",
+    "description": "Первый уровень, базовые слова с буквами A-D.",
+    "pairs": [
+      { "id": 1, "rus": "Кошка", "eng": "cat" },
+      { "id": 2, "rus": "Собака", "eng": "dog" },
+      { "id": 3, "rus": "Солнце", "eng": "sun" },
+      { "id": 4, "rus": "Книга", "eng": "book" }
+    ]
+  },
+  {
+    "level": 2,
+    "name": "Алфавит: предметы",
+    "description": "Базовые предметы, знакомство с новыми буквами.",
+    "pairs": [
+      { "id": 5, "rus": "Дом", "eng": "house" },
+      { "id": 6, "rus": "Машина", "eng": "car" },
+      { "id": 7, "rus": "Красный", "eng": "red" },
+      { "id": 8, "rus": "Хороший", "eng": "good" }
+    ]
+  },
+  {
+    "level": 3,
+    "name": "Базовые существительные",
+    "description": "Простые слова для описания вещей вокруг.",
+    "pairs": [
+      { "id": 9, "rus": "Стул", "eng": "chair" },
+      { "id": 10, "rus": "Стол", "eng": "table" },
+      { "id": 11, "rus": "Лампа", "eng": "lamp" },
+      { "id": 12, "rus": "Ребёнок", "eng": "child" },
+      { "id": 13, "rus": "Время", "eng": "time" }
+    ]
+  },
+  {
+    "level": 4,
+    "name": "Простые глаголы",
+    "description": "Действия, которые легко встретить в жизни.",
+    "pairs": [
+      { "id": 14, "rus": "Читать", "eng": "read" },
+      { "id": 15, "rus": "Писать", "eng": "write" },
+      { "id": 16, "rus": "Есть", "eng": "eat" },
+      { "id": 17, "rus": "Пить", "eng": "drink" },
+      { "id": 18, "rus": "Спать", "eng": "sleep" }
+    ]
+  },
+  {
+    "level": 5,
+    "name": "Ежедневные прилагательные",
+    "description": "Описательные слова, которые часто встречаются.",
+    "pairs": [
+      { "id": 19, "rus": "Маленький", "eng": "small" },
+      { "id": 20, "rus": "Большой", "eng": "big" },
+      { "id": 21, "rus": "Старый", "eng": "old" },
+      { "id": 22, "rus": "Новый", "eng": "new" },
+      { "id": 23, "rus": "Тёплый", "eng": "warm" },
+      { "id": 24, "rus": "Холодный", "eng": "cold" }
+    ]
+  },
+  {
+    "level": 6,
+    "name": "Семья и друзья",
+    "description": "Уроки по близким людям и отношениям.",
+    "pairs": [
+      { "id": 25, "rus": "Мама", "eng": "mother" },
+      { "id": 26, "rus": "Папа", "eng": "father" },
+      { "id": 27, "rus": "Брат", "eng": "brother" },
+      { "id": 28, "rus": "Сестра", "eng": "sister" },
+      { "id": 29, "rus": "Семья", "eng": "family" },
+      { "id": 30, "rus": "Друг", "eng": "friend" }
+    ]
+  },
+  {
+    "level": 7,
+    "name": "Еда и напитки",
+    "description": "Слова из повседневной еды и напитков.",
+    "pairs": [
+      { "id": 31, "rus": "Яблоко", "eng": "apple" },
+      { "id": 32, "rus": "Хлеб", "eng": "bread" },
+      { "id": 33, "rus": "Молоко", "eng": "milk" },
+      { "id": 34, "rus": "Сыр", "eng": "cheese" },
+      { "id": 35, "rus": "Чай", "eng": "tea" },
+      { "id": 36, "rus": "Кофе", "eng": "coffee" }
+    ]
+  },
+  {
+    "level": 8,
+    "name": "Школьные слова",
+    "description": "Термины для класса, учебников и заметок.",
+    "pairs": [
+      { "id": 37, "rus": "Учитель", "eng": "teacher" },
+      { "id": 38, "rus": "Урок", "eng": "lesson" },
+      { "id": 39, "rus": "Учебник", "eng": "textbook" },
+      { "id": 40, "rus": "Ручка", "eng": "pen" },
+      { "id": 41, "rus": "Тетрадь", "eng": "notebook" },
+      { "id": 42, "rus": "Письмо", "eng": "letter" }
+    ]
+  },
+  {
+    "level": 9,
+    "name": "Путешествия",
+    "description": "Слова для поездок, транспорта и багажа.",
+    "pairs": [
+      { "id": 43, "rus": "Аэропорт", "eng": "airport" },
+      { "id": 44, "rus": "Багаж", "eng": "luggage" },
+      { "id": 45, "rus": "Самолёт", "eng": "plane" },
+      { "id": 46, "rus": "Поезд", "eng": "train" },
+      { "id": 47, "rus": "Путешествие", "eng": "travel" },
+      { "id": 48, "rus": "Паспорт", "eng": "passport" }
+    ]
+  },
+  {
+    "level": 10,
+    "name": "Городская жизнь",
+    "description": "Слова, которые встречаются в городе и на улице.",
+    "pairs": [
+      { "id": 49, "rus": "Магазин", "eng": "shop" },
+      { "id": 50, "rus": "Улица", "eng": "street" },
+      { "id": 51, "rus": "Кафе", "eng": "cafe" },
+      { "id": 52, "rus": "Город", "eng": "city" },
+      { "id": 53, "rus": "Площадь", "eng": "square" },
+      { "id": 54, "rus": "Парк", "eng": "park" }
+    ]
+  },
+  {
+    "level": 11,
+    "name": "Природа",
+    "description": "Тема на природе: деревья, реки и озёра.",
+    "pairs": [
+      { "id": 55, "rus": "Дерево", "eng": "tree" },
+      { "id": 56, "rus": "Река", "eng": "river" },
+      { "id": 57, "rus": "Гора", "eng": "mountain" },
+      { "id": 58, "rus": "Озеро", "eng": "lake" },
+      { "id": 59, "rus": "Море", "eng": "sea" },
+      { "id": 60, "rus": "Лес", "eng": "forest" }
+    ]
+  },
+  {
+    "level": 12,
+    "name": "Погода",
+    "description": "Основные погодные слова и природные явления.",
+    "pairs": [
+      { "id": 61, "rus": "Дождь", "eng": "rain" },
+      { "id": 62, "rus": "Снег", "eng": "snow" },
+      { "id": 63, "rus": "Облако", "eng": "cloud" },
+      { "id": 64, "rus": "Ветер", "eng": "wind" },
+      { "id": 65, "rus": "Жара", "eng": "heat" },
+      { "id": 66, "rus": "Холод", "eng": "cold" }
+    ]
+  },
+  {
+    "level": 13,
+    "name": "Хобби и спорт",
+    "description": "Слова о свободном времени и занятиях.",
+    "pairs": [
+      { "id": 67, "rus": "Спорт", "eng": "sport" },
+      { "id": 68, "rus": "Футбол", "eng": "football" },
+      { "id": 69, "rus": "Танец", "eng": "dance" },
+      { "id": 70, "rus": "Музыка", "eng": "music" },
+      { "id": 71, "rus": "Рисование", "eng": "drawing" },
+      { "id": 72, "rus": "Фильм", "eng": "movie" }
+    ]
+  },
+  {
+    "level": 14,
+    "name": "Работа и бизнес",
+    "description": "Слова из профессиональной жизни и офиса.",
+    "pairs": [
+      { "id": 73, "rus": "Офис", "eng": "office" },
+      { "id": 74, "rus": "Работа", "eng": "work" },
+      { "id": 75, "rus": "Деньги", "eng": "money" },
+      { "id": 76, "rus": "Проект", "eng": "project" },
+      { "id": 77, "rus": "Встреча", "eng": "meeting" },
+      { "id": 78, "rus": "Клиент", "eng": "client" }
+    ]
+  },
+  {
+    "level": 15,
+    "name": "Здоровье и чувства",
+    "description": "Слова о самочувствии и эмоциях.",
+    "pairs": [
+      { "id": 79, "rus": "Боль", "eng": "pain" },
+      { "id": 80, "rus": "Радость", "eng": "joy" },
+      { "id": 81, "rus": "Улыбка", "eng": "smile" },
+      { "id": 82, "rus": "Стресс", "eng": "stress" },
+      { "id": 83, "rus": "Здоровье", "eng": "health" },
+      { "id": 84, "rus": "Сон", "eng": "sleep" }
+    ]
+  },
+  {
+    "level": 16,
+    "name": "Технологии",
+    "description": "Слова из мира гаджетов и интернета.",
+    "pairs": [
+      { "id": 85, "rus": "Компьютер", "eng": "computer" },
+      { "id": 86, "rus": "Интернет", "eng": "internet" },
+      { "id": 87, "rus": "Телефон", "eng": "phone" },
+      { "id": 88, "rus": "Приложение", "eng": "app" },
+      { "id": 89, "rus": "Сообщение", "eng": "message" },
+      { "id": 90, "rus": "Пароль", "eng": "password" }
+    ]
+  },
+  {
+    "level": 17,
+    "name": "Образование",
+    "description": "Темы, связанные с учёбой и знаниями.",
+    "pairs": [
+      { "id": 91, "rus": "Университет", "eng": "university" },
+      { "id": 92, "rus": "Экзамен", "eng": "exam" },
+      { "id": 93, "rus": "Ученик", "eng": "student" },
+      { "id": 94, "rus": "Курс", "eng": "course" },
+      { "id": 95, "rus": "Знания", "eng": "knowledge" },
+      { "id": 96, "rus": "Наука", "eng": "science" }
+    ]
+  },
+  {
+    "level": 18,
+    "name": "Культура и искусство",
+    "description": "Слова о театре, музыке и литературе.",
+    "pairs": [
+      { "id": 97, "rus": "Картина", "eng": "painting" },
+      { "id": 98, "rus": "Театр", "eng": "theatre" },
+      { "id": 99, "rus": "Музыкант", "eng": "musician" },
+      { "id": 100, "rus": "Поэзия", "eng": "poetry" },
+      { "id": 101, "rus": "Литература", "eng": "literature" },
+      { "id": 102, "rus": "Выставка", "eng": "exhibition" }
+    ]
+  },
+  {
+    "level": 19,
+    "name": "Абстрактные понятия",
+    "description": "Более сложные слова для выражения мыслей.",
+    "pairs": [
+      { "id": 103, "rus": "Мечта", "eng": "dream" },
+      { "id": 104, "rus": "Идея", "eng": "idea" },
+      { "id": 105, "rus": "Уверенность", "eng": "confidence" },
+      { "id": 106, "rus": "Результат", "eng": "result" },
+      { "id": 107, "rus": "Возможность", "eng": "opportunity" },
+      { "id": 108, "rus": "Успех", "eng": "success" }
+    ]
+  },
+  {
+    "level": 20,
+    "name": "Продвинутые фразы",
+    "description": "Уровень с готовыми фразами для реальных ситуаций.",
+    "pairs": [
+      { "id": 109, "rus": "Сколько это стоит?", "eng": "How much does this cost?" },
+      { "id": 110, "rus": "Я хочу забронировать столик", "eng": "I want to book a table" },
+      { "id": 111, "rus": "Где находится ближайший банк?", "eng": "Where is the nearest bank?" },
+      { "id": 112, "rus": "Я учусь английскому каждый день", "eng": "I study English every day" },
+      { "id": 113, "rus": "Это лучший вариант для меня", "eng": "This is the best option for me" },
+      { "id": 114, "rus": "Спасибо за вашу помощь", "eng": "Thank you for your help" }
+    ]
+  }
+]

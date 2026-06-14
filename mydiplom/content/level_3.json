@@ -1,0 +1,84 @@
+{
+  "level": 3,
+  "title": "Intermediate",
+  "description": "C1–C2 preparation: advanced grammar, style, idioms, debates, nuanced pronunciation and production",
+  "min_correct_percent": 80,
+  "stages": [
+    {
+      "id": "3-1",
+      "title": "Advanced tenses & aspect contrasts",
+      "type": "grammar",
+      "items": ["Perfect vs Perfect Continuous","use in nuance: result vs duration"],
+      "exercises": ["choose_form","paraphrase"]
+    },
+    {
+      "id": "3-2",
+      "title": "Past Continuous + Past Perfect",
+      "type": "grammar",
+      "items": ["I had eaten before he arrived","I was reading while..."],
+      "exercises": ["timeline_rewrite","error_correction"]
+    },
+    {
+      "id": "3-3",
+      "title": "Modals & shades of meaning",
+      "type": "grammar",
+      "items": ["can/could/might/must/should/have to/ought to"],
+      "exercises": ["choose_modal_nuance","rewrite_with_modal"]
+    },
+    {
+      "id": "3-4",
+      "title": "Inversion & emphasis",
+      "type": "grammar",
+      "items": ["Never have I seen...","Not only did he..."],
+      "exercises": ["invert_sentence","register_check"]
+    },
+    {
+      "id": "3-5",
+      "title": "Subjunctive and hypotheticals",
+      "type": "grammar",
+      "items": ["I wish I were..., If only he had...","formal hypotheticals"],
+      "exercises": ["rewrite_wish","create_hypothetical"]
+    },
+    {
+      "id": "3-6",
+      "title": "Idioms, phrasal verbs and colloquialisms",
+      "type": "vocab",
+      "items": ["spill the beans, hit the sack, pull off"],
+      "exercises": ["match_idiom","use_in_sentence"]
+    },
+    {
+      "id": "3-7",
+      "title": "Stylistic registers & tone",
+      "type": "style",
+      "items": ["formal vs informal: email, report, casual chat"],
+      "exercises": ["tone_transform","formal_write"]
+    },
+    {
+      "id": "3-8",
+      "title": "Argumentation & debate practice",
+      "type": "speaking",
+      "items": ["structure a short 3-minute argument","use linking words and hedging"],
+      "exercises": ["prepare_debate","2_vs_2_roleplay"]
+    },
+    {
+      "id": "3-9",
+      "title": "Advanced pronunciation: stress, reduction, intonation",
+      "type": "pronunciation",
+      "items": ["contrastive stress, pitch for questions vs statements"],
+      "exercises": ["record_and_compare","intonation_practice"]
+    },
+    {
+      "id": "3-10",
+      "title": "Production: article / short essay / presentation",
+      "type": "production",
+      "items": ["write 250-word essay", "prepare 5-minute presentation"],
+      "exercises": ["essay_write","present_and_record"]
+    },
+    {
+      "id": "3-final",
+      "title": "Level 3 Final Test",
+      "type": "final_test",
+      "requirements": { "presentation_minutes": 5, "essay_words": 200, "debate_points": 3 }
+    }
+  ]
+}

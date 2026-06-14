@@ -1,0 +1,175 @@
+{
+  "level": 1,
+  "title": "Beginner",
+  "description": "Alphabet, basic words, pronunciation, simple grammar and survival phrases",
+  "min_correct_percent": 70,
+  "stages": [
+    {
+      "id": "1-0",
+      "title": "Transcription & Symbols",
+      "type": "phonetics",
+      "items": [
+        { "symbol": "/i:/", "example": "see" },
+        { "symbol": "/ɪ/", "example": "sit" },
+        { "symbol": "/ʃ/", "example": "ship" }
+      ],
+      "exercises": ["symbol_to_word","mark_transcription"]
+    },
+    {
+      "id": "1-1",
+      "title": "Alphabet A-D",
+      "type": "alphabet",
+      "items": [
+        { "letter": "A", "name": "A [eɪ]", "sound": "/audio/letters/A.mp3", "example": "A like in apple" },
+        { "letter": "B", "name": "B [bi:]", "sound": "/audio/letters/B.mp3", "example": "B like in boy" },
+        { "letter": "C", "name": "C [si:]", "sound": "/audio/letters/C.mp3", "example": "C like in cat" },
+        { "letter": "D", "name": "D [di:]", "sound": "/audio/letters/D.mp3", "example": "D like in dog" }
+      ],
+      "tests": [
+        { "type": "audio_to_letter", "question": "Which letter makes the /k/ sound?", "answer": "C" }
+      ]
+    },
+    {
+      "id": "1-1b",
+      "title": "Alphabet E-H",
+      "type": "alphabet",
+      "items": [
+        { "letter": "E", "name": "E [i:]", "sound": "/audio/letters/E.mp3", "example": "E like in egg" },
+        { "letter": "F", "name": "F [ef]", "sound": "/audio/letters/F.mp3", "example": "F like in fish" },
+        { "letter": "G", "name": "G [dʒi:]", "sound": "/audio/letters/G.mp3", "example": "G like in go" },
+        { "letter": "H", "name": "H [eɪtʃ]", "sound": "/audio/letters/H.mp3", "example": "H like in hat" }
+      ],
+      "tests": [ { "type": "audio_to_letter", "question": "Which letter makes the /g/ sound?", "answer": "G" } ]
+    },
+    {
+      "id": "1-1c",
+      "title": "Alphabet I-L",
+      "type": "alphabet",
+      "items": [
+        { "letter": "I", "name": "I [aɪ]", "sound": "/audio/letters/I.mp3", "example": "I like in igloo" },
+        { "letter": "J", "name": "J [dʒeɪ]", "sound": "/audio/letters/J.mp3", "example": "J like in jam" },
+        { "letter": "K", "name": "K [keɪ]", "sound": "/audio/letters/K.mp3", "example": "K like in kite" },
+        { "letter": "L", "name": "L [el]", "sound": "/audio/letters/L.mp3", "example": "L like in lamp" }
+      ]
+    },
+    {
+      "id": "1-1d",
+      "title": "Alphabet M-P",
+      "type": "alphabet",
+      "items": [
+        { "letter": "M", "name": "M [em]", "sound": "/audio/letters/M.mp3", "example": "M like in man" },
+        { "letter": "N", "name": "N [en]", "sound": "/audio/letters/N.mp3", "example": "N like in nose" },
+        { "letter": "O", "name": "O [oʊ]", "sound": "/audio/letters/O.mp3", "example": "O like in octopus" },
+        { "letter": "P", "name": "P [pi:]", "sound": "/audio/letters/P.mp3", "example": "P like in pig" }
+      ]
+    },
+    {
+      "id": "1-1e",
+      "title": "Alphabet Q-T",
+      "type": "alphabet",
+      "items": [
+        { "letter": "Q", "name": "Q [kju:]", "sound": "/audio/letters/Q.mp3", "example": "Q like in queen" },
+        { "letter": "R", "name": "R [ar]", "sound": "/audio/letters/R.mp3", "example": "R like in red" },
+        { "letter": "S", "name": "S [es]", "sound": "/audio/letters/S.mp3", "example": "S like in sun" },
+        { "letter": "T", "name": "T [ti:]", "sound": "/audio/letters/T.mp3", "example": "T like in top" }
+      ]
+    },
+    {
+      "id": "1-1f",
+      "title": "Alphabet U-Z",
+      "type": "alphabet",
+      "items": [
+        { "letter": "U", "name": "U [ju:]", "sound": "/audio/letters/U.mp3", "example": "U like in umbrella" },
+        { "letter": "V", "name": "V [vi:]", "sound": "/audio/letters/V.mp3", "example": "V like in van" },
+        { "letter": "W", "name": "W [dʌbəlju:]", "sound": "/audio/letters/W.mp3", "example": "W like in window" },
+        { "letter": "X", "name": "X [eks]", "sound": "/audio/letters/X.mp3", "example": "X like in box" },
+        { "letter": "Y", "name": "Y [waɪ]", "sound": "/audio/letters/Y.mp3", "example": "Y like in yellow" },
+        { "letter": "Z", "name": "Z [zed]", "sound": "/audio/letters/Z.mp3", "example": "Z like in zebra" }
+      ]
+    },
+    {
+      "id": "1-2",
+      "title": "CVC Words (animals)",
+      "type": "words",
+      "topic": "animals",
+      "items": ["cat","dog","pig","cow"],
+      "mini_game": { "type": "image_to_word", "assets": ["cat.jpg","dog.jpg"] },
+      "exercises": ["match_image","multiple_choice_audio","type_word"]
+    },
+    {
+      "id": "1-3a",
+      "title": "Reading rules: open/closed syllables & combos",
+      "type": "reading",
+      "items": ["open vs closed: be vs bed","th, sh, ch, gh examples"],
+      "exercises": ["read_aloud","choose_pronunciation"]
+    },
+    {
+      "id": "1-3",
+      "title": "Numbers 1-20",
+      "type": "numbers",
+      "items": [
+        {"n":1,"word":"one"},{"n":2,"word":"two"},{"n":3,"word":"three"}
+      ],
+      "exercises": ["counting_audio","choose_spelling"]
+    },
+    {
+      "id": "1-4",
+      "title": "Pronouns & Possessives",
+      "type": "grammar",
+      "items": ["I, you, he, she, it, we, they","my, your, his, her"],
+      "exercises": ["replace_word","fill_blank"]
+    },
+    {
+      "id": "1-5",
+      "title": "Prepositions of place",
+      "type": "vocab",
+      "items": ["in, on, at, under, between"],
+      "exercises": ["picture_place","true_false"]
+    },
+    {
+      "id": "1-4",
+      "title": "Cloned Phrases",
+      "type": "phrases",
+      "items": ["I am a student","It is a cat","It is a box"],
+      "exercises": ["fill_blank","replace_word"]
+    },
+    {
+      "id": "1-6",
+      "title": "Basic tenses: Present / Past / Future (will)",
+      "type": "grammar",
+      "items": ["I play (Present Simple)", "I played (Past Simple)", "I will play (Future)"] ,
+      "exercises": ["transform_tense","choose_form"]
+    },
+    {
+      "id": "1-7",
+      "title": "Survival dialogues",
+      "type": "dialogue",
+      "items": [
+        { "q": "Where is the toilet?", "a": "Where is the toilet?" },
+        { "q": "How much is this?", "a": "How much is this?" },
+        { "q": "Can I have the bill, please?", "a": "Can I have the bill, please?" }
+      ],
+      "exercises": ["role_play","select_response"]
+    },
+    {
+      "id": "1-5",
+      "title": "Action Verbs & Commands",
+      "type": "verbs",
+      "items": ["to run","to sit","to read","to eat"],
+      "exercises": ["match_action","command_response"]
+    },
+    {
+      "id": "1-6",
+      "title": "Questions: What / Where",
+      "type": "questions",
+      "items": ["What is your name?","Where is the cat?"],
+      "exercises": ["multiple_choice","short_answer"]
+    },
+    {
+      "id": "1-final",
+      "title": "Level 1 Final Test",
+      "type": "final_test",
+      "requirements": { "letters_by_sound": 10, "read_words": 10, "answer_questions": 2 }
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "level": 2,
+  "title": "Elementary",
+  "description": "B1–B2 core: tenses, aspects, modals, conditionals, passive, reported speech and fluency practice",
+  "min_correct_percent": 70,
+  "stages": [
+    {
+      "id": "2-1",
+      "title": "Present Simple vs Present Continuous",
+      "type": "grammar",
+      "items": ["I work (habit)", "I am working (now)", "Signal words: always, usually, now"],
+      "exercises": ["choose_tense","complete_sentence"]
+    },
+    {
+      "id": "2-2",
+      "title": "Past Simple & Past Continuous",
+      "type": "grammar",
+      "items": ["I watched (Past Simple)", "I was watching when... (Past Continuous)"],
+      "exercises": ["timeline_order","gap_fill"]
+    },
+    {
+      "id": "2-3",
+      "title": "Will vs Going To (future plans and predictions)",
+      "type": "grammar",
+      "items": ["I will call you", "I'm going to visit her", "Predictions vs plans"],
+      "exercises": ["choose_form","rewrite_sentence"]
+    },
+    {
+      "id": "2-4",
+      "title": "Present Perfect (experience/results)",
+      "type": "grammar",
+      "items": ["I have visited London", "Already / yet / just"],
+      "exercises": ["sentence_completion","experience_questions"]
+    },
+    {
+      "id": "2-5",
+      "title": "Modals: ability, obligation, advice",
+      "type": "grammar",
+      "items": ["can/could, must/have to, should/ought to"],
+      "exercises": ["choose_modal","give_advice"]
+    },
+    {
+      "id": "2-6",
+      "title": "Conditionals: zero, first and second",
+      "type": "grammar",
+      "items": ["If + present → present (0)", "If + present → will (1)", "If + past → would (2)"],
+      "exercises": ["complete_conditional","rewrite_sentence"]
+    },
+    {
+      "id": "2-7",
+      "title": "Passive voice (Present & Past Simple)",
+      "type": "grammar",
+      "items": ["The cake was made by her", "It is done"],
+      "exercises": ["transform_active_passive","error_correction"]
+    },
+    {
+      "id": "2-8",
+      "title": "Reported speech (statements and questions)",
+      "type": "grammar",
+      "items": ["She said (that) she was tired", "He asked where I lived"],
+      "exercises": ["convert_direct_reported","dialogue_practice"]
+    },
+    {
+      "id": "2-9",
+      "title": "Linking words & short monologue",
+      "type": "fluency",
+      "items": ["however, moreover, therefore, although"],
+      "exercises": ["connect_sentences","2_min_monologue"]
+    },
+    {
+      "id": "2-10",
+      "title": "Functional tasks: write an email / short story summary",
+      "type": "production",
+      "items": ["short informal email (100 words)", "summary of a short article"],
+      "exercises": ["write_email","summarize_text"]
+    },
+    {
+      "id": "2-final",
+      "title": "Level 2 Final Test",
+      "type": "final_test",
+      "requirements": { "monologue_mins": 2, "email_words": 80, "conditional_use": 2 }
+    }
+  ]
+}

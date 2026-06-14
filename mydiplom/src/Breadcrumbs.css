@@ -1,0 +1,53 @@
+.breadcrumbs {
+  background: transparent;
+  padding: 12px 0;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 10;
+}
+
+.breadcrumbs-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  font-size: 13px;
+}
+
+.breadcrumb-link {
+  color: #7FB0E8;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.breadcrumb-link:hover {
+  color: #CBED66;
+  text-decoration: underline;
+}
+
+.breadcrumb-current {
+  color: #B494F9;
+  font-weight: 600;
+}
+
+.breadcrumb-separator {
+  color: #A8DEFA;
+  margin: 0 8px;
+  font-weight: 400;
+}
+
+/* Для мобильных устройств */
+@media (max-width: 768px) {
+  .breadcrumbs {
+    padding: 8px 0;
+  }
+  
+  .breadcrumbs-container {
+    font-size: 11px;
+    padding: 0 15px;
+  }
+  
+  .breadcrumb-separator {
+    margin: 0 5px;
+  }
+}

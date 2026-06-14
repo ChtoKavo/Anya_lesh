@@ -1,0 +1,50 @@
+/* index.css или App.css - глобальные стили */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
+  min-height: 100vh;
+}
+
+/* Убираем все лишние стили для #root */
+#root {
+  min-height: 100vh;
+  /* Убираем max-width, padding, text-align которые ломают верстку */
+}
+/* Кастомный скроллбар для всей страницы */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f2f5;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #7FB0E8 0%, #5EA0D6 100%);
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5EA0D6 0%, #7FB0E8 100%);
+  cursor: pointer;
+}
+
+/* Для Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #7FB0E8 #f0f2f5;
+}
+
+/* Для IE/Edge */
+body {
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}

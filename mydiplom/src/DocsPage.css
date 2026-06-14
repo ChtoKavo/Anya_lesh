@@ -1,0 +1,146 @@
+.docs-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px 16px 0;
+  position: relative;
+  background: #F1FAFF;
+}
+
+.docs-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 12px 0 20px;
+  z-index: 1;
+}
+
+.docs-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 28px 32px;
+  border: 1px solid rgba(127, 176, 232, 0.25);
+  box-shadow: 0 18px 50px rgba(31, 68, 111, 0.08);
+}
+
+.docs-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 26px;
+}
+
+.docs-title {
+  font-size: 32px;
+  line-height: 1.05;
+  font-weight: 700;
+  color: #0f1c2d;
+}
+
+.docs-subtitle {
+  max-width: 640px;
+  color: #3b4a65;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.docs-section {
+  margin-top: 14px;
+  color: #243048;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.docs-section p {
+  margin-bottom: 16px;
+}
+
+.docs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.docs-btn {
+  background: linear-gradient(135deg, #7FB0E8 0%, #5EA0D6 100%);
+  color: white;
+  border: none;
+  border-radius: 32px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.docs-btn:hover {
+  transform: translateY(-2px);
+}
+
+.docs-secondary {
+  background: white;
+  color: #26436e;
+  border: 1px solid rgba(127, 176, 232, 0.35);
+}
+
+.docs-secondary:hover {
+  opacity: 0.92;
+}
+
+.docs-page .dashboard-header {
+  top: 0;
+  margin-bottom: 16px;
+}
+
+.docs-page .header-container {
+  padding: 12px 20px;
+}
+
+.docs-page .dashboard-footer {
+  margin-top: auto;
+}
+
+@media (max-width: 900px) {
+  .dashboard-header .header-container,
+  .docs-main {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .docs-heading {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .dashboard-header {
+    top: 0;
+    margin: 0;
+    border-radius: 0;
+    padding: 10px 0;
+  }
+
+  .docs-card {
+    padding: 20px;
+  }
+
+  .docs-title {
+    font-size: 28px;
+  }
+
+  .docs-subtitle,
+  .docs-section {
+    font-size: 14px;
+  }
+}

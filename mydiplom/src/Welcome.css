@@ -1,0 +1,135 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.welcome-container {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.blur-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('/back1111.jpg') center/cover no-repeat;
+  filter: blur(8px);
+  transform: scale(1.05);
+}
+
+.content-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding-left: 10%;
+}
+
+.left-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  max-width: 500px;
+}
+
+.center-image {
+  width: 300px;
+  height: auto;
+  margin-bottom: 40px;
+  animation: fadeInUp 0.8s ease;
+}
+
+.welcome-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: #191923;
+  margin-bottom: 40px;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
+  animation: fadeInUp 0.8s ease 0.2s both;
+}
+
+.start-button {
+  padding: 14px 50px;
+  font-size: 18px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #CBED66 0%, #B494F9 100%);
+  color: #191923;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-family: var(--font-primary);
+  animation: fadeInUp 0.8s ease 0.4s both;
+}
+
+.start-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(203, 237, 102, 0.4);
+}
+
+.start-button:active {
+  transform: translateY(0);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding-left: 5%;
+  }
+  
+  .center-image {
+    width: 200px;
+    margin-bottom: 30px;
+  }
+  
+  .welcome-title {
+    font-size: 32px;
+    margin-bottom: 30px;
+  }
+  
+  .start-button {
+    padding: 10px 35px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-wrapper {
+    padding-left: 20px;
+  }
+  
+  .center-image {
+    width: 150px;
+    margin-bottom: 20px;
+  }
+  
+  .welcome-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .start-button {
+    padding: 8px 25px;
+    font-size: 14px;
+  }
+}
