@@ -52,7 +52,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            localStorage.getItem('userRole') === 'admin' ? (
+            String(localStorage.getItem('userRole')).toLowerCase().trim() === 'admin' ? (
               <AdminPanel />
             ) : (
               <Navigate to="/profile" replace />
@@ -62,7 +62,7 @@ function App() {
         <Route
           path="/teacher"
           element={
-            localStorage.getItem('userRole') === 'teacher' ? (
+            String(localStorage.getItem('userRole')).toLowerCase().trim() === 'teacher' ? (
               <TeacherPanel />
             ) : (
               <Navigate to="/profile" replace />

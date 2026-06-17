@@ -124,7 +124,7 @@ const Profile = () => {
           if (data.user.last_seen) {
             localStorage.setItem('userLastSeen', data.user.last_seen);
           }
-          localStorage.setItem('userRole', role);
+          localStorage.setItem('userRole', role.toLowerCase().trim());
 
           setEditForm({
             name,
@@ -228,7 +228,8 @@ const Profile = () => {
         nickname: trimmedNickname,
         avatar: newAvatar,
       }));
-      localStorage.setItem('userName', trimmedName);
+      localStorage.setItem('userName', trimmedNickname); // Сохраняем никнейм как userName для Dashboard
+      localStorage.setItem('userRealName', trimmedName); // Сохраняем реальное имя отдельно
       localStorage.setItem('userEmail', trimmedEmail);
       localStorage.setItem('userAvatar', newAvatar);
       setEditMode(false);

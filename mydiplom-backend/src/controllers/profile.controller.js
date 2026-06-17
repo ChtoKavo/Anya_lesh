@@ -124,6 +124,17 @@ export async function updateProfile(req, res) {
       }
       updates.push('nickname = ?');
       values.push(trimmedNickname);
+      
+      // Также обновить имя первого питомца пользователя, если он есть
+      try {
+        await pool.query(
+          'UPDATE pets SET name = ? WHERE user_id = ?',
+          [trimmedNickname, userId]
+        );
+      } catch (petErr) {
+        console.error('Failed to update pet name during profile update:', petErr);
+        // Не прерываем основной процесс обновления профиля
+      }
     }
 
     if (avatar !== undefined) {
@@ -139,12 +150,12 @@ export async function updateProfile(req, res) {
     const query = `UPDATE users SET ${updates.join(', ')} WHERE id = ?`;
     await pool.query(query, values);
 
-    const [[updatedUser]] = await pool.query(
+    const [userRows] = await pool.query(
       'SELECT id, name, nickname, email, role, avatar FROM users WHERE id = ?',
       [userId]
     );
 
-    return res.json({ user: updatedUser, message: 'Profile updated' });
+    return res.json({ user: userRows[0], message: 'Profile updated' });
   } catch (err) {
     console.error('updateProfile error:', err);
     return res.status(500).json({ error: 'Failed to update profile' });

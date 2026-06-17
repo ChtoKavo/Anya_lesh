@@ -9,49 +9,62 @@ export async function register(req, res) {
   }
 
   const normalizedEmail = String(email).trim().toLowerCase();
-  const [existing] = await pool.query('SELECT id FROM users WHERE email = ?', [normalizedEmail]);
-  if (existing.length > 0) {
-    return res.status(409).json({ message: 'Email уже используется' });
-  }
-
-  const passwordHash = await hashPassword(password);
-  
-  // Создать пользователя
-  const [result] = await pool.query(
-    'INSERT INTO users (name, nickname, email, password_hash) VALUES (?, ?, ?, ?)',
-    [nickname.trim(), nickname.trim(), normalizedEmail, passwordHash]
-  );
-
-  const userId = result.insertId;
+  const connection = await pool.getConnection();
 
   try {
-    await pool.query(
-      'INSERT INTO user_progress (user_id, level, xp, next_level_xp, coins, energy, max_energy, streak_days, words_learned_total) VALUES (?, 1, 0, 1000, 0, 100.00, 100.00, 0, 0)',
+    await connection.beginTransaction();
+
+    const [existing] = await connection.query('SELECT id FROM users WHERE email = ?', [normalizedEmail]);
+    if (existing.length > 0) {
+      await connection.rollback();
+      return res.status(409).json({ message: 'Email уже используется' });
+    }
+
+    const passwordHash = await hashPassword(password);
+    
+    // Создать пользователя
+    const [result] = await connection.query(
+      'INSERT INTO users (name, nickname, email, password_hash) VALUES (?, ?, ?, ?)',
+      [nickname.trim(), nickname.trim(), normalizedEmail, passwordHash]
+    );
+
+    const userId = result.insertId;
+
+    // Вставляем или обновляем прогресс (может уже существовать из-за триггера)
+    await connection.query(
+      `INSERT INTO user_progress (user_id, level, xp, next_level_xp, coins, energy, max_energy, streak_days, words_learned_total) 
+       VALUES (?, 1, 0, 1000, 0, 100.00, 100.00, 0, 0)
+       ON DUPLICATE KEY UPDATE user_id=VALUES(user_id)`,
       [userId]
     );
-  } catch (err) {
-    console.error('Error creating user progress:', err);
-  }
 
-  // Создать персонажа с именем petName
-  try {
-    await pool.query(
-      'INSERT INTO pets (user_id, name, type, mood, level, xp, energy, max_energy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [userId, petName.trim(), 'default', 'happy', 1, 0, 100.00, 100.00]
+    // Вставляем или обновляем питомца (может уже существовать из-за триггера, поэтому обновляем имя)
+    await connection.query(
+      `INSERT INTO pets (user_id, name, type, mood, level, xp, energy, max_energy) 
+       VALUES (?, ?, 'default', 'happy', 1, 0, 100.00, 100.00)
+       ON DUPLICATE KEY UPDATE name=VALUES(name)`,
+      [userId, petName.trim()]
     );
+
+    await connection.commit();
+
+    const user = {
+      id: userId,
+      name: nickname.trim(),
+      petName: petName.trim(),
+      email: normalizedEmail,
+      role: 'user',
+    };
+
+    return res.json({ token: signToken(user), user });
+
   } catch (err) {
-    console.error('Error creating pet:', err);
+    await connection.rollback();
+    console.error('Registration error:', err);
+    return res.status(500).json({ message: 'Ошибка при регистрации', error: err.message });
+  } finally {
+    connection.release();
   }
-
-  const user = {
-    id: userId,
-    name: nickname.trim(),
-    petName: petName.trim(),
-    email: normalizedEmail,
-    role: 'user',
-  };
-
-  return res.json({ token: signToken(user), user });
 }
 
 export async function getUsers(req, res) {

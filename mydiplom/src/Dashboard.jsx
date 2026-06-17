@@ -6,7 +6,7 @@ import Breadcrumbs from './Breadcrumbs';
 import Logo from './Logo';
 import Footer from './Footer';
 import Toast from './Toast';
-import { getTodayTasks, getUserStats, getTopUsers } from './apiClient';
+import { getTodayTasks, getUserStats, getTopUsers, fetchProfile } from './apiClient';
 import { loadJourneyProfile } from './userJourney';
 import OnboardingTour from './OnboardingTour';
 
@@ -60,6 +60,20 @@ const Dashboard = () => {
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (!token) return;
+    
+    // Fetch profile to get real pet name and stats
+    fetchProfile().then(data => {
+      if (data?.user) {
+        const name = data.user.pets?.[0]?.name || data.user.nickname || data.user.name || 'Персонаж';
+        setPetName(name);
+        localStorage.setItem('userName', name);
+        if (data.progress) {
+          setCoins(data.progress.coins || 0);
+          setEnergy(data.progress.energy || 100);
+        }
+      }
+    }).catch(err => console.warn('Dashboard: fetchProfile error', err));
+
     setTodayLoading(true);
     getTodayTasks().then((data) => {
       setTodayTask(data);
@@ -260,7 +274,7 @@ const Dashboard = () => {
               <div className="poster-overlay"></div>
               <div className="poster-text">
                 <h2 className="character-name">{petName}</h2>
-                <p className="character-title">Хранитель</p>
+                <p className="character-title">Верный друг</p>
                 <button className="poster-btn">Перейти к персонажу →</button>
               </div>
             </div>

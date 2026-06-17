@@ -60,7 +60,7 @@ const Auth = () => {
         localStorage.setItem('userName', displayName);
         localStorage.setItem('userAvatar', avatarValue);
         localStorage.setItem('userEmail', response?.user?.email || normalizedEmail);
-        localStorage.setItem('userRole', response?.user?.role || 'user');
+        localStorage.setItem('userRole', (response?.user?.role || 'user').toLowerCase().trim());
         localStorage.setItem('userLastSeen', new Date().toISOString());
         setToast({ message: `Добро пожаловать, ${displayName}! 🎉`, type: 'success' });
         setTimeout(() => navigate('/main'), 1500);
@@ -102,7 +102,7 @@ const Auth = () => {
         localStorage.setItem('userName', displayName);
         localStorage.setItem('userEmail', response?.user?.email || normalizedEmail);
         localStorage.setItem('userAvatar', displayName.charAt(0).toUpperCase());
-        localStorage.setItem('userRole', response?.user?.role || 'user');
+        localStorage.setItem('userRole', (response?.user?.role || 'user').toLowerCase().trim());
         setToast({ message: `Поздравляем, ${displayName}! Добро пожаловать в игру! 🚀`, type: 'success' });
         setTimeout(() => navigate('/goal-selection'), 1500);
       } catch (error) {

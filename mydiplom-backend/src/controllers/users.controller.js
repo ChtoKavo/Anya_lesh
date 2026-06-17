@@ -431,7 +431,7 @@ export async function getUserInactivity(req, res) {
     const [rows] = await pool.query('SELECT COALESCE(up.streak_days,0) as daysPlayed, u.last_seen FROM users u LEFT JOIN user_progress up ON u.id = up.user_id WHERE u.id = ?', [userId]);
     if (!rows.length) return res.status(404).json({ error: 'User not found' });
     const r = rows[0];
-    const daysAbsent = r.last_seen ? Math.floor((Date.now() - new Date(r.last_seen).getTime()) / (1000*60*60*24)) : null;
+    const daysAbsent = r.last_seen ? Math.floor((Date.now() - new Date(r.last_seen).getTime()) / (1000*60*60*24)) : 0;
     return res.json({ daysPlayed: r.daysPlayed, daysAbsent });
   } catch (err) {
     console.error('getUserInactivity error:', err);
@@ -443,9 +443,20 @@ export async function sendAdminMessage(req, res) {
   try {
     const { userId, text } = req.body;
     if (!userId || !text) return res.status(400).json({ error: 'userId and text required' });
+    
     // from admin user
-    const fromId = req.user?.id || null;
-    await pool.query('INSERT INTO messages (from_user_id, to_user_id, text) VALUES (?, ?, ?)', [fromId, userId, text]);
+    const fromId = req.user?.id;
+    if (!fromId) {
+      return res.status(401).json({ error: 'Admin ID not found in session' });
+    }
+
+    try {
+      await pool.query('INSERT INTO messages (from_user_id, to_user_id, text) VALUES (?, ?, ?)', [fromId, userId, String(text).trim()]);
+    } catch (dbErr) {
+      console.error('sendAdminMessage database error:', dbErr);
+      return res.status(500).json({ error: 'Database failed to save message', details: dbErr.message });
+    }
+
     return res.json({ message: 'sent' });
   } catch (err) {
     console.error('sendAdminMessage error:', err);

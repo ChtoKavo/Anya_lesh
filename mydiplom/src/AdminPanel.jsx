@@ -51,7 +51,7 @@ const AdminPanel = () => {
   const [responseText, setResponseText] = useState('');
 
   useEffect(() => {
-    const userRole = localStorage.getItem('userRole');
+    const userRole = String(localStorage.getItem('userRole') || '').toLowerCase().trim();
     if (userRole !== 'admin') {
       navigate('/dashboard');
     }

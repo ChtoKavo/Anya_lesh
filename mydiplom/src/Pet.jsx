@@ -300,8 +300,8 @@ const Pet = () => {
             </div>
             
             <div className="character-name-block">
-              <h2 className="character-name-title">Имя перса</h2>
-              <p className="character-level">Уровень 1 • 0/2000 XP</p>
+              <h2 className="character-name-title">{profileData?.user?.pets?.[0]?.name || profileData?.user?.nickname || 'Имя перса'}</h2>
+              <p className="character-level">Уровень {profileData?.user?.pets?.[0]?.level || 1} • {profileData?.user?.pets?.[0]?.xp || 0}/2000 XP</p>
             </div>
           </div>
 
