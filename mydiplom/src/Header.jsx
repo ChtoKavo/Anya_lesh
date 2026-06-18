@@ -22,11 +22,11 @@ const Header = () => {
     { path: '/profile', label: 'Профиль', icon: '👤' },
   ];
 
-  const adminNav = userRole === 'admin'
+  const adminNav = (userRole === 'admin' || userRole === 'owner_admin')
     ? { path: '/admin', label: 'Админ Панель', icon: '🔐' }
     : null;
 
-  const teacherNav = userRole === 'teacher'
+  const teacherNav = (userRole === 'teacher' || userRole === 'admin' || userRole === 'owner_admin')
     ? { path: '/teacher', label: 'Учитель', icon: '🎓' }
     : null;
 

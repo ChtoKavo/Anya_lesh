@@ -8,6 +8,15 @@ dotenv.config();
 const port = process.env.PORT || 5000;
 
 async function startServer() {
+  try {
+    const [columns] = await pool.query("SHOW COLUMNS FROM user_progress LIKE 'inventory'");
+    if (!columns.length) {
+      await pool.query('ALTER TABLE user_progress ADD COLUMN inventory JSON NULL');
+      console.log('Added inventory column to user_progress');
+    }
+  } catch (err) {
+    console.warn('Could not ensure inventory column exists on user_progress:', err.message || err);
+  }
   await pool.query('SELECT 1');
   // Ensure every user has a corresponding user_progress row
   try {

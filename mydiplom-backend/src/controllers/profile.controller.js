@@ -25,10 +25,17 @@ export async function me(req, res) {
     try {
       console.log('profile.me: running progress SELECT');
       const [progressRows] = await pool.query(
-        'SELECT level, xp, next_level_xp, coins, energy, words_learned_total, streak_days FROM user_progress WHERE user_id = ?',
+        'SELECT level, xp, next_level_xp, coins, energy, words_learned_total, streak_days, inventory FROM user_progress WHERE user_id = ?',
         [userId]
       );
       progress = progressRows && progressRows[0] ? progressRows[0] : {};
+        if (progress.inventory && typeof progress.inventory === 'string') {
+          try {
+            progress.inventory = JSON.parse(progress.inventory);
+          } catch (parseErr) {
+            progress.inventory = {};
+          }
+        }
     } catch (qErr) {
       console.error('profile.me progress SELECT error:', qErr);
       throw qErr;

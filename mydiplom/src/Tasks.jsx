@@ -63,9 +63,24 @@ const Tasks = () => {
   const [lives, setLives] = useState(() => loadJourneyProfile()?.lives ?? 3);
   const [activeTab, setActiveTab] = useState('daily');
 
-  const handleCompleteTask = (taskId) => {
+  const handleCompleteTask = async (taskId) => {
     const result = completeTask(taskId, 'tasks');
     if (!result.success) return;
+
+    // Save to backend so the teacher can see it
+    try {
+      const { submitAnswer } = await import('./apiClient');
+      const taskObj = tasks.find(t => t.id === taskId);
+      await submitAnswer({
+        task_id: taskId,
+        stage_id: 'daily-task',
+        answer_text: taskObj ? taskObj.title : 'Task completed',
+        is_correct: true,
+        time_spent_seconds: 60 // Estimate
+      });
+    } catch (e) {
+      console.warn('Failed to sync task completion to backend', e);
+    }
 
     const updatedProfile = loadJourneyProfile();
     const currentTasks = getCurrentTasks().tasks;

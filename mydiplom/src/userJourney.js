@@ -1,3 +1,4 @@
+import { syncProgress } from './apiClient';
 // userJourney.js - ДОПОЛНЕНИЯ к существующему коду
 
 import { LEARNING_PATHS, getCurrentTopic, getNextTopics, getEstimatedTimeRemaining } from './learningPath';
@@ -33,14 +34,28 @@ export function loadJourneyProfile() {
 
 export function saveJourneyProfile(profile) {
   localStorage.setItem(getJourneyStorageKey(), JSON.stringify(profile));
+  
+  if (localStorage.getItem('authToken')) {
+    syncProgress({
+      xp: profile.xp,
+      coins: profile.coins,
+      energy: profile.energy,
+      level: profile.level,
+      wordsLearned: profile.wordsLearned,
+      streakDays: profile.streakDays,
+      lives: profile.lives
+      ,
+      inventory: profile.inventory
+    }).catch(err => console.warn('Failed to sync progress to backend', err));
+  }
+  
   return profile;
 }
 
 export function updateJourneyProfile(updates) {
   const profile = loadJourneyProfile() || {};
   const updated = { ...profile, ...updates };
-  localStorage.setItem(getJourneyStorageKey(), JSON.stringify(updated));
-  return updated;
+  return saveJourneyProfile(updated);
 }
 
 export function getGoalStageFromDates(startDate, endDate) {

@@ -58,6 +58,16 @@ const Profile = () => {
   });
   const [supportRequests, setSupportRequests] = useState([]);
 
+  // Inventory state
+  const [inventoryItems, setInventoryItems] = useState(() => loadJourneyProfile()?.inventory?.items || []);
+  const [shopItems, setShopItems] = useState([
+    { id: 1, name: 'Волшебное зелье', price: 150, image: '/zelka.png', purchased: false },
+    { id: 2, name: 'Кристалл силы', price: 300, image: '/cristal.png', purchased: false },
+    { id: 3, name: 'Драконья чешуя', price: 500, image: '/dragon cheshuya.png', purchased: false },
+    { id: 4, name: 'Золотое яблоко', price: 750, image: '/apply.png', purchased: false },
+    { id: 5, name: 'Сердце жизни', price: 10, image: '/heart.png', type: 'life', purchased: false }
+  ]);
+
   const journey = loadJourneyProfile();
 
   const userName = userData.name;
@@ -131,6 +141,18 @@ const Profile = () => {
             email,
             nickname: data.user.nickname || name,
           });
+
+          // Load inventory from progress data
+          if (data.progress?.inventory) {
+            const inventory = typeof data.progress.inventory === 'string' 
+              ? JSON.parse(data.progress.inventory) 
+              : data.progress.inventory;
+            setInventoryItems(inventory?.items || []);
+            setShopItems(prevItems => prevItems.map(item => ({
+              ...item,
+              purchased: Array.isArray(inventory?.items) && inventory.items.includes(item.id)
+            })));
+          }
         }
 
         // Load support requests
@@ -317,10 +339,10 @@ const Profile = () => {
             <button className="nav-link" onClick={handleGoToPractice}>Урок</button>
             <button className="nav-link" onClick={() => navigate('/tasks')}>Задания</button>
             <button className="nav-link" onClick={() => navigate('/friends')}>Друзья</button>
-            {userRole === 'teacher' && (
+            {['teacher', 'admin', 'owner_admin'].includes(userRole) && (
               <button className="nav-link" onClick={() => navigate('/teacher')}>Учитель</button>
             )}
-            {userRole === 'admin' && (
+            {['admin', 'owner_admin'].includes(userRole) && (
               <button className="nav-link" onClick={() => navigate('/admin')}>Админка</button>
             )}
             <button className="nav-link active">Профиль</button>
@@ -370,6 +392,7 @@ const Profile = () => {
 
         <div className="tabs">
           <button className={activeTab === 'overview' ? 'tab active' : 'tab'} onClick={() => setActiveTab('overview')}>Обзор</button>
+          <button className={activeTab === 'inventory' ? 'tab active' : 'tab'} onClick={() => setActiveTab('inventory')}>Инвентарь</button>
           <button className={activeTab === 'achievements' ? 'tab active' : 'tab'} onClick={() => setActiveTab('achievements')}>Достижения</button>
           <button className={activeTab === 'edit' ? 'tab active' : 'tab'} onClick={() => setActiveTab('edit')}>Редактировать</button>
           <button className={activeTab === 'security' ? 'tab active' : 'tab'} onClick={() => setActiveTab('security')}>Безопасность</button>
@@ -411,6 +434,29 @@ const Profile = () => {
                 <span>{item.unlocked ? '✓' : '...'}</span>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Инвентарь */}
+        {activeTab === 'inventory' && (
+          <div className="profile-card">
+            <h2>Инвентарь</h2>
+            {inventoryItems.length === 0 ? (
+              <p className="inventory-empty">Пока нет купленных предметов.</p>
+            ) : (
+              <div className="inventory-grid">
+                {inventoryItems.map((itemId) => {
+                  const item = shopItems.find((shopItem) => shopItem.id === itemId);
+                  if (!item) return null;
+                  return (
+                    <div key={item.id} className="inventory-card">
+                      <img src={item.image} alt={item.name} className="inventory-item-img" />
+                      <div className="inventory-item-name">{item.name}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 

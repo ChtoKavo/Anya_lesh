@@ -16,12 +16,19 @@ const GamePage = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
   const [score, setScore] = useState(0);
-  const [coins, setCoins] = useState(1250);
-  const [energy, setEnergy] = useState(85);
+  const timerRef = React.useRef(Date.now());
+  const [coins, setCoins] = useState(() => loadJourneyProfile()?.coins ?? 1250);
+  const [energy, setEnergy] = useState(() => loadJourneyProfile()?.energy ?? 85);
   const [clouds, setClouds] = useState([]);
   const [canFlip, setCanFlip] = useState(true);
-  const [currentLevel, setCurrentLevel] = useState(1);
-  const [unlockedLevels, setUnlockedLevels] = useState([1]);
+  const [currentLevel, setCurrentLevel] = useState(() => {
+    const saved = localStorage.getItem(`memoryGame_${(localStorage.getItem('userEmail') || 'guest').trim().toLowerCase().replace(/[^a-z0-9@._-]/g, '_')}`);
+    return saved ? JSON.parse(saved).currentLevel || 1 : 1;
+  });
+  const [unlockedLevels, setUnlockedLevels] = useState(() => {
+    const saved = localStorage.getItem(`memoryGame_${(localStorage.getItem('userEmail') || 'guest').trim().toLowerCase().replace(/[^a-z0-9@._-]/g, '_')}`);
+    return saved ? JSON.parse(saved).unlockedLevels || [1] : [1];
+  });
   const [showLevelComplete, setShowLevelComplete] = useState(false);
 
   const getGameStorageKey = () => {
@@ -299,26 +306,58 @@ const GamePage = () => {
   // Загрузка прогресса из localStorage
   useEffect(() => {
     const localState = loadGameState() || {};
+    const journey = loadJourneyProfile() || {};
 
-    const applyState = (state) => {
+    const applyState = (state, backendCoins, backendEnergy) => {
       if (state?.currentLevel) setCurrentLevel(state.currentLevel);
       if (Array.isArray(state?.unlockedLevels)) setUnlockedLevels(state.unlockedLevels);
-      if (typeof state?.coins === 'number') setCoins(state.coins);
-      if (typeof state?.energy === 'number') setEnergy(state.energy);
+      // Load coins and energy from backend first (most up-to-date), then from journey, then from state
+      if (typeof backendCoins === 'number') {
+        setCoins(backendCoins);
+      } else if (typeof journey?.coins === 'number') {
+        setCoins(journey.coins);
+      } else if (typeof state?.coins === 'number') {
+        setCoins(state.coins);
+      }
+      if (typeof backendEnergy === 'number') {
+        setEnergy(backendEnergy);
+      } else if (typeof journey?.energy === 'number') {
+        setEnergy(journey.energy);
+      } else if (typeof state?.energy === 'number') {
+        setEnergy(state.energy);
+      }
     };
 
     const token = localStorage.getItem('authToken');
     if (token) {
-      fetchGameState()
-        .then((data) => {
-          const remoteState = data?.state || {};
-          const mergedState = { ...localState, ...remoteState };
-          saveLocalGameState(mergedState);
-          applyState(mergedState);
-        })
-        .catch(() => {
-          applyState(localState);
+      // Load backend coins and energy
+      import('./apiClient').then(({ fetchProfile }) => {
+        fetchProfile().then((data) => {
+          const backendCoins = data?.progress?.coins;
+          const backendEnergy = data?.progress?.energy;
+          fetchGameState()
+            .then((data) => {
+              const remoteState = data?.state || {};
+              const mergedState = { ...localState, ...remoteState };
+              saveLocalGameState(mergedState);
+              applyState(mergedState, backendCoins, backendEnergy);
+            })
+            .catch(() => {
+              applyState(localState, backendCoins, backendEnergy);
+            });
+        }).catch(() => {
+          fetchGameState()
+            .then((data) => {
+              const remoteState = data?.state || {};
+              const mergedState = { ...localState, ...remoteState };
+              saveLocalGameState(mergedState);
+              applyState(mergedState);
+            })
+            .catch(() => {
+              applyState(localState);
+            });
         });
+      }).catch(err => console.warn('Failed to import apiClient', err));
     } else {
       applyState(localState);
     }
@@ -365,6 +404,7 @@ const GamePage = () => {
     setScore(0);
     setGameFinished(false);
     setGameStarted(true);
+    timerRef.current = Date.now();
     setCanFlip(true);
     setShowLevelComplete(false);
   };
@@ -394,7 +434,7 @@ const GamePage = () => {
   useEffect(() => {
     if (matchedIndexes.length === cards.length && cards.length > 0 && gameStarted) {
       const levelScore = score;
-      const bonusCoins = Math.floor(levelScore * 1.5);
+      const bonusCoins = Math.floor(levelScore * 1.5) - 5;
 
       setCoins(prev => prev + bonusCoins);
       unlockNextLevel(currentLevel);
@@ -402,7 +442,21 @@ const GamePage = () => {
       persistGameState({ lastCompletedLevel: currentLevel });
       const profile = loadJourneyProfile() || {};
       const completedLevels = Math.max(profile.completedLevels || 0, currentLevel);
-      updateJourneyProfile({ currentLevel, completedLevels });
+      const newCoins = (profile.coins || 0) + bonusCoins;
+      const newEnergy = Math.min(100, (profile.energy || 85) + energy - 85);
+      updateJourneyProfile({ currentLevel, completedLevels, coins: newCoins, energy: Math.max(0, energy) });
+      
+      // Save progress to backend
+      import('./apiClient').then(({ submitAnswer }) => {
+        submitAnswer({
+          task_id: currentLevel,
+          stage_id: 'memory-game',
+          answer_text: `score: ${levelScore}, moves: ${moves}`,
+          is_correct: true,
+          time_spent_seconds: Math.round((Date.now() - timerRef.current) / 1000) || 30
+        }).catch(err => console.warn('Failed to save game stats to backend', err));
+      }).catch(err => console.warn('Failed to import apiClient', err));
+
       checkAchievements();
       setShowLevelComplete(true);
       setGameFinished(true);
@@ -432,7 +486,7 @@ const GamePage = () => {
         setTimeout(() => {
           setMatchedIndexes(prev => [...prev, newFlipped[0], newFlipped[1]]);
           setFlippedIndexes([]);
-          const pointsEarned = 10;
+          const pointsEarned = 5;
           setScore(prev => prev + pointsEarned);
           setCoins(prev => prev + pointsEarned);
           setEnergy(prev => Math.min(100, prev + 2));

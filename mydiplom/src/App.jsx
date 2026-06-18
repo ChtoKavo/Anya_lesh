@@ -52,7 +52,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            String(localStorage.getItem('userRole')).toLowerCase().trim() === 'admin' ? (
+            ['admin', 'owner_admin'].includes(String(localStorage.getItem('userRole')).toLowerCase().trim()) ? (
               <AdminPanel />
             ) : (
               <Navigate to="/profile" replace />
@@ -62,7 +62,7 @@ function App() {
         <Route
           path="/teacher"
           element={
-            String(localStorage.getItem('userRole')).toLowerCase().trim() === 'teacher' ? (
+            ['teacher', 'admin', 'owner_admin'].includes(String(localStorage.getItem('userRole')).toLowerCase().trim()) ? (
               <TeacherPanel />
             ) : (
               <Navigate to="/profile" replace />

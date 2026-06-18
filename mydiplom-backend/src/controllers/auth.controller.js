@@ -32,8 +32,8 @@ export async function register(req, res) {
 
     // Вставляем или обновляем прогресс (может уже существовать из-за триггера)
     await connection.query(
-      `INSERT INTO user_progress (user_id, level, xp, next_level_xp, coins, energy, max_energy, streak_days, words_learned_total) 
-       VALUES (?, 1, 0, 1000, 0, 100.00, 100.00, 0, 0)
+      `INSERT INTO user_progress (user_id, level, xp, next_level_xp, coins, energy, max_energy, streak_days, words_learned_total, lives) 
+       VALUES (?, 1, 0, 1000, 50, 100.00, 100.00, 0, 0, 3)
        ON DUPLICATE KEY UPDATE user_id=VALUES(user_id)`,
       [userId]
     );

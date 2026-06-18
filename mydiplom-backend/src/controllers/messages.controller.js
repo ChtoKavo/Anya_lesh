@@ -139,3 +139,31 @@ export async function getAdminChats(req, res) {
     return res.status(500).json({ error: 'Failed to load chats' });
   }
 }
+
+export async function getAdminChatThread(req, res) {
+  try {
+    await ensureMessagesTable();
+    const threadId = req.params.id;
+    if (!threadId || !threadId.includes('_')) {
+      return res.status(400).json({ error: 'Invalid thread id' });
+    }
+
+    const [idA, idB] = threadId.split('_').map((value) => Number(value));
+    if (!idA || !idB || idA === idB) {
+      return res.status(400).json({ error: 'Invalid thread participants' });
+    }
+
+    const [messages] = await pool.query(
+      `SELECT id, from_user_id, to_user_id, text, created_at
+       FROM messages
+       WHERE (from_user_id = ? AND to_user_id = ?) OR (from_user_id = ? AND to_user_id = ?)
+       ORDER BY created_at ASC`,
+      [idA, idB, idB, idA]
+    );
+
+    return res.json({ messages });
+  } catch (err) {
+    console.error('getAdminChatThread error:', err?.message || err);
+    return res.status(500).json({ error: 'Failed to load thread messages' });
+  }
+}

@@ -52,7 +52,6 @@ const Friends = () => {
   const MESSAGE_LIMIT_PER_FRIEND = 20;
 
   const [friends, setFriends] = useState([]);
-  const [teachers, setTeachers] = useState([]);
   const [currentUserEmail, setCurrentUserEmail] = useState('');
 
   const [friendRequests, setFriendRequests] = useState([]);
@@ -142,21 +141,6 @@ const Friends = () => {
       const normalizedCurrentRole = (role) => String(role || '').trim().toLowerCase();
       const nonAdmin = users.filter((user) => normalizedCurrentRole(user.role) !== 'admin' && user.email !== currentEmail);
 
-      const teacherAccounts = nonAdmin.filter(u => normalizedCurrentRole(u.role) === 'teacher').map((user) => ({
-        id: user.id,
-        name: user.name || user.nickname,
-        nickname: user.nickname,
-        petName: user.petName || user.nickname,
-        role: 'teacher',
-        email: user.email,
-        avatar: (user.name || user.nickname || 'T').charAt(0).toUpperCase(),
-        level: user.level || 1,
-        words: user.words || 0,
-        streak: user.streak || 0,
-        isOnline: Math.random() > 0.5,
-        lastActive: 'несколько минут назад',
-      }));
-
       const userAccounts = nonAdmin.filter(u => normalizedCurrentRole(u.role) !== 'teacher').map((user) => ({
         id: user.id,
         name: user.name || user.nickname,
@@ -174,14 +158,13 @@ const Friends = () => {
         lastActive: 'несколько минут назад',
       }));
 
-      setTeachers(teacherAccounts);
       setFriends(userAccounts);
       setFriendRequests(incoming);
       setOutgoingRequests(outgoing);
 
       if (!activeTab || activeTab === 'friends') {
         const hasFriendContent = acceptedFriendIds.length > 0;
-        if (!hasFriendContent && (teacherAccounts.length > 0 || userAccounts.length > 0)) {
+        if (!hasFriendContent && userAccounts.length > 0) {
           setActiveTab('users');
         }
       }
@@ -241,21 +224,6 @@ const Friends = () => {
     const normalizedCurrentRole = (role) => String(role || '').trim().toLowerCase();
     const nonAdmin = users.filter((user) => normalizedCurrentRole(user.role) !== 'admin' && user.email !== currentEmail);
 
-    const teacherAccounts = nonAdmin.filter(u => normalizedCurrentRole(u.role) === 'teacher').map((user) => ({
-      id: user.id,
-      name: user.name || user.nickname,
-      nickname: user.nickname,
-      petName: user.petName || user.nickname,
-      role: 'teacher',
-      email: user.email,
-      avatar: (user.name || user.nickname || 'T').charAt(0).toUpperCase(),
-      level: user.level || 1,
-      words: user.words || 0,
-      streak: user.streak || 0,
-      isOnline: Math.random() > 0.5,
-      lastActive: 'несколько минут назад',
-    }));
-
     const userAccounts = nonAdmin.filter(u => normalizedCurrentRole(u.role) !== 'teacher').map((user) => ({
       id: user.id,
       name: user.name || user.nickname,
@@ -273,7 +241,6 @@ const Friends = () => {
       lastActive: 'несколько минут назад',
     }));
 
-    setTeachers(teacherAccounts);
     setFriends(userAccounts);
     setFriendRequests(incoming);
     setOutgoingRequests(outgoing);
@@ -286,7 +253,7 @@ const Friends = () => {
         return;
       }
 
-      const availableUsers = [...friends, ...teachers];
+      const availableUsers = [...friends];
       const foundUser = availableUsers.find((user) => {
         const name = (user.name || '').toLowerCase();
         const pet = (user.petName || '').toLowerCase();
@@ -331,7 +298,6 @@ const Friends = () => {
       await sendFriendRequest({ recipientId: searchResult.id });
       setOutgoingRequests([...outgoingRequests, { id: Date.now(), ...searchResult, pending: true }]);
       setFriends(friends.map((user) => user.id === searchResult.id ? { ...user, outgoing: true } : user));
-      setTeachers(teachers.map((user) => user.id === searchResult.id ? { ...user, outgoing: true } : user));
       setShowAddFriend(false);
       setSearchEmail('');
       setSearchResult(null);
@@ -505,11 +471,9 @@ const Friends = () => {
 
   const acceptedCount = friends.filter(f => f.status === 'active').length;
   const otherUsersCount = friends.filter(f => f.status !== 'active').length;
-  const teacherCount = teachers.length;
-
   const tabs = [
     { id: 'friends', label: 'Друзья', count: acceptedCount },
-    { id: 'users', label: 'Пользователи', count: otherUsersCount + teacherCount },
+    { id: 'users', label: 'Пользователи', count: otherUsersCount },
     { id: 'requests', label: 'Запросы', count: friendRequests.length },
     { id: 'banned', label: 'Чёрный список', count: bannedUsers.length }
   ];
@@ -550,7 +514,7 @@ const Friends = () => {
             <button className="nav-link" onClick={handleGoToPractice}>Урок</button>
             <button className="nav-link" onClick={handleGoToTasks}>Задания</button>
             <button className="nav-link active" onClick={handleGoToFriends}>Друзья</button>
-            {userRole === 'teacher' && (
+            {['teacher', 'admin', 'owner_admin'].includes(userRole) && (
               <button className="nav-link" onClick={() => navigate('/teacher')}>Учитель</button>
             )}
             {isAdmin && (
@@ -588,8 +552,7 @@ const Friends = () => {
                     <div className="friend-info">
                       <div className="friend-name-row">
                         <h4>{friend.name}</h4>
-                        {friend.role === 'teacher' && <span className="teacher-badge">Учитель</span>}
-                        {getOnlineStatus(friend.isOnline, friend.lastActive)}
+                                  {getOnlineStatus(friend.isOnline, friend.lastActive)}
                       </div>
                       <div className="friend-stats">
                         <span>Уровень {friend.level}</span>
@@ -617,35 +580,7 @@ const Friends = () => {
 
           {activeTab === 'users' && (
             <div className="users-list">
-              {teachers.length > 0 && (
-                <div className="teachers-block">
-                  <h3 style={{ marginBottom: '12px' }}>Учителя</h3>
-                  {teachers.map((t) => (
-                    <div key={t.id} className="friend-card user-row">
-                      <div className="friend-avatar">{t.avatar}</div>
-                      <div className="friend-info">
-                        <div className="friend-name-row">
-                          <h4>{t.name}</h4>
-                          <span className="teacher-badge">Учитель</span>
-                          {getOnlineStatus(t.isOnline, t.lastActive)}
-                        </div>
-                        <div className="friend-stats">
-                          <span>Уровень {t.level}</span>
-                          <span>{t.words} слов</span>
-                        </div>
-                      </div>
-                      <div className="friend-actions">
-                        <button className="action-btn message" onClick={() => openMessageModal(t)}>Написать</button>
-                        <button className="action-btn profile" onClick={() => handleViewProfile(t)}>Профиль</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {teachers.length > 0 && <hr className="users-divider" />}
-
-              <div style={{ marginTop: teachers.length > 0 ? '18px' : '0' }}>
+              <div>
                 {friends.filter(f => f.status !== 'active').length === 0 ? (
                   <div className="empty-state"><p>Пользователей пока нет</p></div>
                 ) : (

@@ -12,7 +12,7 @@ export async function getFriendsAndRequests(req, res) {
         `SELECT fr.id as request_id, fr.from_user_id, fr.to_user_id, fr.status, u.id as user_id, u.nickname, u.email, u.name
          FROM friend_requests fr
          JOIN users u ON u.id = CASE WHEN fr.from_user_id = ? THEN fr.to_user_id ELSE fr.from_user_id END
-         WHERE (fr.from_user_id = ? OR fr.to_user_id = ?) AND fr.status = 'accepted'`,
+         WHERE (fr.from_user_id = ? OR fr.to_user_id = ?) AND fr.status = 'accepted' AND u.role != 'teacher'`,
         [userId, userId, userId]
       );
       friendsRows = rows;
@@ -32,7 +32,7 @@ export async function getFriendsAndRequests(req, res) {
         `SELECT fr.id as request_id, fr.from_user_id, fr.to_user_id, fr.status, u.id as requester_user_id, u.nickname, u.email, u.name
          FROM friend_requests fr
          JOIN users u ON fr.from_user_id = u.id
-         WHERE fr.to_user_id = ? AND fr.status = 'pending'`,
+         WHERE fr.to_user_id = ? AND fr.status = 'pending' AND u.role != 'teacher'`,
         [userId]
       );
       incoming = incomingRows;
@@ -41,7 +41,7 @@ export async function getFriendsAndRequests(req, res) {
         `SELECT fr.id as request_id, fr.from_user_id, fr.to_user_id, fr.status, u.id as recipient_user_id, u.nickname, u.email, u.name
          FROM friend_requests fr
          JOIN users u ON fr.to_user_id = u.id
-         WHERE fr.from_user_id = ? AND fr.status = 'pending'`,
+         WHERE fr.from_user_id = ? AND fr.status = 'pending' AND u.role != 'teacher'`,
         [userId]
       );
       outgoing = outgoingRows;
@@ -68,14 +68,15 @@ export async function sendFriendRequest(req, res) {
 
     let recipient;
     if (recipientId) {
-      const [rows] = await pool.query('SELECT id, email, nickname, name FROM users WHERE id = ?', [recipientId]);
+      const [rows] = await pool.query('SELECT id, email, nickname, name, role FROM users WHERE id = ?', [recipientId]);
       recipient = rows[0];
     } else if (recipientEmail) {
-      const [rows] = await pool.query('SELECT id, email, nickname, name FROM users WHERE email = ?', [recipientEmail]);
+      const [rows] = await pool.query('SELECT id, email, nickname, name, role FROM users WHERE email = ?', [recipientEmail]);
       recipient = rows[0];
     }
 
     if (!recipient) return res.status(404).json({ error: 'Recipient not found' });
+    if (recipient.role === 'teacher') return res.status(403).json({ error: 'Teacher accounts cannot be added as friends' });
     if (recipient.id === requesterId) return res.status(400).json({ error: 'Cannot send request to yourself' });
 
     try {

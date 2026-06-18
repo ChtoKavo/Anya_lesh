@@ -10,9 +10,9 @@ const InitialAssessment = () => {
   const navigate = useNavigate();
 
   const levelLabels = {
-    beginner: 'Начальный (A0-A1) - с нуля',
-    intermediate: 'Средний (A2-B1) - база есть',
-    advanced: 'Продвинутый (B2+) - свободное владение',
+    beginner: 'Новичок (A1–A2) - основы',
+    intermediate: 'Продвинутый (B1–B2) - уверенный средний',
+    advanced: 'Шарящий (C1–C2) - мастерство',
   };
 
   const [dailyMinutes, setDailyMinutes] = useState('20');
@@ -22,9 +22,9 @@ const InitialAssessment = () => {
   const [showTimeInfo, setShowTimeInfo] = useState(false);
 
   const levelDescriptions = {
-    beginner: 'Вы никогда не учили английский или всё забыли. Нужно начинать с алфавита и простых слов.',
-    intermediate: 'Вы знаете базовые слова и простые времена. Нужно расширить словарный запас и разговорные навыки.',
-    advanced: 'Вы свободно общаетесь, но хотите углубить знания, изучить идиомы и нюансы.',
+    beginner: '10 заданий от алфавита до Past Simple. Идеально для старта.',
+    intermediate: '10 заданий: Present Perfect, модальные глаголы, пассивный залог и монолог.',
+    advanced: '10 заданий: инверсия, идиомы, акценты, дебаты и импровизация.',
   };
 
   const selectedPath = LEARNING_PATHS[level];
@@ -66,7 +66,7 @@ const InitialAssessment = () => {
       wordsLearned: 0,
       streakDays: 0,
       xp: 0,
-      coins: 10,
+      coins: 50,
       energy: 100,
       lives: 3,
       petName: 'Хранитель',

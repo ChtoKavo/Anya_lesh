@@ -11,11 +11,14 @@ export async function getAssignedStudents(req, res) {
         u.nickname,
         u.email,
         u.role,
+        u.last_seen,
         IF(u.assigned_teacher_id = ?, 1, 0) AS is_assigned,
         COALESCE(up.level, 1) AS level,
         COALESCE(up.xp, 0) AS xp,
         COALESCE(up.coins, 0) AS coins,
         COALESCE(up.energy, 100.00) AS energy,
+        COALESCE(up.words_learned_total, 0) AS words_learned_total,
+        COALESCE(up.streak_days, 0) AS streak_days,
         COALESCE(p.name, u.nickname) AS pet_name
       FROM users u
       LEFT JOIN user_progress up ON u.id = up.user_id
@@ -27,8 +30,8 @@ export async function getAssignedStudents(req, res) {
 
     return res.json({ students });
   } catch (err) {
-    console.error('getAssignedStudents error:', err.message);
-    return res.status(500).json({ error: 'Failed to load students' });
+    console.error('getAssignedStudents error:', err.message, err.stack);
+    return res.status(500).json({ error: 'Failed to load students', details: err.message, stack: err.stack });
   }
 }
 
@@ -47,11 +50,13 @@ export async function assignStudentToTeacher(req, res) {
     }
 
     const student = rows[0];
+    const isAdmin = ['admin', 'owner_admin'].includes(req.user.role);
+
     if (student.role !== 'user') {
       return res.status(400).json({ error: 'Cannot assign this account as a student' });
     }
 
-    if (student.assigned_teacher_id && student.assigned_teacher_id !== teacherId) {
+    if (student.assigned_teacher_id && student.assigned_teacher_id !== teacherId && !isAdmin) {
       return res.status(403).json({ error: 'Student уже назначен другому учителю' });
     }
 
@@ -108,7 +113,9 @@ export async function getStudentDetails(req, res) {
     }
 
     const student = rows[0];
-    if (student.assigned_teacher_id && student.assigned_teacher_id !== teacherId) {
+    const isAdmin = ['admin', 'owner_admin'].includes(req.user.role);
+
+    if (student.assigned_teacher_id && student.assigned_teacher_id !== teacherId && !isAdmin) {
       return res.status(403).json({ error: 'Access denied to this student' });
     }
 
@@ -125,10 +132,19 @@ export async function getStudentDetails(req, res) {
       [studentId, teacherId]
     );
 
-    return res.json({ student, stats, notes });
+    const [answers] = await pool.query(
+      `SELECT id, task_id, stage_id, answer_text, is_correct, time_spent_seconds, created_at
+      FROM user_answers
+      WHERE user_id = ?
+      ORDER BY created_at DESC
+      LIMIT 20`,
+      [studentId]
+    );
+
+    return res.json({ student, stats, notes, answers });
   } catch (err) {
-    console.error('getStudentDetails error:', err.message);
-    return res.status(500).json({ error: 'Failed to load student details' });
+    console.error('getStudentDetails error:', err.message, err.stack);
+    return res.status(500).json({ error: 'Failed to load student details', details: err.message, stack: err.stack });
   }
 }
 
@@ -148,7 +164,9 @@ export async function addTeacherNote(req, res) {
     }
 
     const student = rows[0];
-    if (student.assigned_teacher_id && student.assigned_teacher_id !== teacherId) {
+    const isAdmin = ['admin', 'owner_admin'].includes(req.user.role);
+
+    if (student.assigned_teacher_id && student.assigned_teacher_id !== teacherId && !isAdmin) {
       return res.status(403).json({ error: 'Access denied to this student' });
     }
 

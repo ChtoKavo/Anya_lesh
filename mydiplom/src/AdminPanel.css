@@ -525,6 +525,45 @@
   box-shadow: 0 4px 12px rgba(180, 148, 249, 0.3);
 }
 
+/* ========== TEACHER PANEL SPECIFIC ========== */
+
+.notes-section {
+  margin-top: 30px;
+  border-top: 1px solid rgba(127, 176, 232, 0.2);
+  padding-top: 20px;
+}
+
+.notes-section h3 {
+  font-size: 1.2rem;
+  color: #191923;
+  margin-bottom: 15px;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.note-card {
+  background: #fff;
+  border: 1px solid rgba(127, 176, 232, 0.2);
+  border-radius: 12px;
+  padding: 15px;
+  transition: all 0.3s;
+}
+
+.note-card:hover {
+  border-color: #7fb0e8;
+  box-shadow: 0 4px 12px rgba(127, 176, 232, 0.1);
+}
+
+.user-detail-card h2 {
+  margin-bottom: 20px;
+  color: #9d4ede;
+}
+
 /* ========== SUPPORT SECTION ========== */
 
 .support-header {

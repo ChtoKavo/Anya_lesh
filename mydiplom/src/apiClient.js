@@ -136,6 +136,10 @@ export async function advanceLevel(payload) {
   return apiRequest('/api/progress/advance', { method: 'POST', body: JSON.stringify(payload) });
 }
 
+export async function syncProgress(payload) {
+  return apiRequest('/api/progress/sync', { method: 'POST', body: JSON.stringify(payload) });
+}
+
 // Profile management
 export async function updateProfile(payload) {
   return apiRequest('/api/profile/update', {
@@ -168,7 +172,7 @@ export async function getUserDetails(userId) {
 }
 
 export async function getRanking(limit = 5, offset = 0) {
-  return apiRequest(`/api/admin/ranking?limit=${limit}&offset=${offset}`, { method: 'GET' });
+  return apiRequest(`/api/progress/ranking?limit=${limit}&offset=${offset}`, { method: 'GET' });
 }
 
 export async function changeUserRole(userId, role) {
@@ -330,6 +334,10 @@ export async function reorderRanking(newOrder) {
 export async function getChats(params = {}) {
   const qs = new URLSearchParams(params).toString();
   return apiRequest(`/api/admin/chats${qs ? '?' + qs : ''}`, { method: 'GET' });
+}
+
+export async function getChatThread(threadId) {
+  return apiRequest(`/api/admin/chats/${encodeURIComponent(threadId)}`, { method: 'GET' });
 }
 
 export async function flagChatMessage(messageId, payload) {

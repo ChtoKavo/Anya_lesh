@@ -3,7 +3,8 @@ export function isAdmin(req, res, next) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  if (req.user.role !== 'admin') {
+  const role = String(req.user.role || '').toLowerCase().trim();
+  if (role !== 'admin' && role !== 'owner_admin') {
     return res.status(403).json({ error: 'Access denied. Admin only.' });
   }
 
@@ -15,8 +16,9 @@ export function isTeacher(req, res, next) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  if (req.user.role !== 'teacher') {
-    return res.status(403).json({ error: 'Access denied. Teacher only.' });
+  const role = String(req.user.role || '').toLowerCase().trim();
+  if (role !== 'teacher' && role !== 'admin' && role !== 'owner_admin') {
+    return res.status(403).json({ error: 'Access denied. Teacher or Admin only.' });
   }
 
   next();

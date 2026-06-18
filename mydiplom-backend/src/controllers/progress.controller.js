@@ -265,6 +265,92 @@ export async function advanceLevel(req, res) {
   }
 }
 
+export async function syncProgress(req, res) {
+  const user_id = req.user?.id;
+  if (!user_id) return res.status(400).json({ error: 'auth required' });
+
+  const { xp, coins, energy, level, wordsLearned, streakDays, lives, inventory } = req.body;
+
+  const updates = [];
+  const values = [];
+
+  if (xp !== undefined) { updates.push('xp = ?'); values.push(xp); }
+  if (coins !== undefined) { updates.push('coins = ?'); values.push(coins); }
+  if (energy !== undefined) { updates.push('energy = ?'); values.push(energy); }
+  
+  if (level !== undefined) {
+    const numericLevel = parseInt(level, 10);
+    if (!isNaN(numericLevel)) {
+      updates.push('level = ?'); values.push(numericLevel);
+    }
+  }
+
+  if (wordsLearned !== undefined) { updates.push('words_learned_total = ?'); values.push(wordsLearned); }
+  if (streakDays !== undefined) { updates.push('streak_days = ?'); values.push(streakDays); }
+  if (lives !== undefined) { updates.push('lives = ?'); values.push(lives); }
+  if (inventory !== undefined) {
+    updates.push('inventory = ?');
+    values.push(JSON.stringify(inventory));
+  }
+
+  if (updates.length === 0) {
+    return res.json({ ok: true, message: 'Nothing to update' });
+  }
+
+  values.push(user_id);
+  const sql = `UPDATE user_progress SET ${updates.join(', ')} WHERE user_id = ?`;
+
+  try {
+    await pool.query(sql, values);
+    
+    // Also sync level to users table if provided
+    if (level !== undefined) {
+       const numericLevel = parseInt(level, 10);
+       if (!isNaN(numericLevel)) {
+         await pool.query('UPDATE users SET current_level = ? WHERE id = ?', [numericLevel, user_id]);
+       }
+    }
+    
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('syncProgress error:', err);
+    return res.status(500).json({ error: 'Failed to sync progress' });
+  }
+}
+
+export async function getPublicRanking(req, res) {
+  try {
+    const limit = parseInt(req.query.limit || 5, 10);
+    const offset = parseInt(req.query.offset || 0, 10);
+
+    const [rows] = await pool.query(
+      `SELECT 
+        u.id,
+        u.nickname,
+        COALESCE(up.level, 1) as level,
+        COALESCE(up.coins, 0) as coins,
+        COALESCE(up.xp, 0) as xp,
+        COALESCE(up.words_learned_total, 0) as words_learned,
+        COALESCE(p.name, '') as pet_name,
+        COALESCE(p.type, 'default') as pet_type,
+        COALESCE(p.level, 1) as pet_level
+      FROM users u
+      LEFT JOIN user_progress up ON u.id = up.user_id
+      LEFT JOIN pets p ON u.id = p.user_id
+      WHERE u.is_active = 1 AND u.role = 'user'
+      ORDER BY COALESCE(up.xp,0) DESC, COALESCE(up.level,0) DESC
+      LIMIT ? OFFSET ?`,
+      [limit, offset]
+    );
+
+    const rankings = rows.map((r, idx) => ({ ...r, rank: offset + idx + 1 }));
+    return res.json({ rankings });
+  } catch (err) {
+    console.error('getPublicRanking error:', err && err.message);
+    return res.status(500).json({ error: 'Failed to fetch ranking' });
+  }
+}
+
 export async function getUserStats(req, res) {
   try {
     const user_id = req.user?.id;

@@ -84,7 +84,15 @@ const Pet = () => {
 
         // fetch profile for current user (progress, coins, energy)
         const profileResp = await fetchProfile().catch(() => null);
-        if (mounted && profileResp) setProfileData(profileResp);
+        if (mounted && profileResp) {
+          setProfileData(profileResp);
+          if (profileResp.progress) {
+            setCoins(profileResp.progress.coins || 0);
+            setEnergy(profileResp.progress.energy || 100);
+            setMaxEnergy(profileResp.progress.max_energy || 100);
+            setWordsLearned(profileResp.progress.words_learned_total || 0);
+          }
+        }
 
         // fetch today's recommended task (light)
         const today = await getTodayTasks().catch(() => null);
@@ -301,7 +309,7 @@ const Pet = () => {
             
             <div className="character-name-block">
               <h2 className="character-name-title">{profileData?.user?.pets?.[0]?.name || profileData?.user?.nickname || 'Имя перса'}</h2>
-              <p className="character-level">Уровень {profileData?.user?.pets?.[0]?.level || 1} • {profileData?.user?.pets?.[0]?.xp || 0}/2000 XP</p>
+              <p className="character-level">Уровень {profileData?.progress?.level || 1} • {profileData?.progress?.xp || 0}/{profileData?.progress?.next_level_xp || 1000} XP</p>
             </div>
           </div>
 
@@ -369,14 +377,13 @@ const Pet = () => {
             <div className="achievements-section">
               <h3 className="section-title">Достижения</h3>
               <div className="achievements-grid">
+                {achievements.length === 0 && (
+                  <div className="achievement-empty">Достижений пока нет. Продолжай выполнять уроки, и они появятся здесь.</div>
+                )}
                 {achievements.map((item) => (
                   <div key={item.id} className={`achievement-card ${item.earned ? 'earned' : 'locked'}`}>
                     <div className="achievement-icon">
-                      {item.earned ? (
-                        <img src="/trophy_icon.png" alt="earned" style={{ width: 28, height: 28 }} />
-                      ) : (
-                        <div className="achievement-placeholder" />
-                      )}
+                      <span className="achievement-icon-text">{item.earned ? '✓' : ''}</span>
                     </div>
                     <div className="achievement-body">
                       <span className="achievement-name">{item.name}</span>
@@ -395,8 +402,9 @@ const Pet = () => {
                 {topUsers.slice(0, leaderboardExpanded ? topUsers.length : 5).map((user, index) => (
                   <div key={index} className={`leaderboard-item ${user.isCurrentUser ? 'current-user' : ''}`}>
                     <span className="rank">{index + 1}</span>
-                    <span className="user-name">{user.name}</span>
-                    <span className="user-words">{user.words ?? user.words_learned_total ?? 0} слов</span>
+                    <span className="user-name">{user.nickname || user.name || 'Игрок'}</span>
+                    <span className="user-words">{user.words_learned || user.words_learned_total || user.words || 0} слов</span>
+                    <span className="user-progress">{user.level ? `Lv ${user.level}` : ''}{user.xp ? ` • ${user.xp} XP` : ''}</span>
                   </div>
                 ))}
 
@@ -422,15 +430,15 @@ const Pet = () => {
                 </div>
                 <div className="stat">
                   <span className="stat-label">Выучено слов</span>
-                  <span className="stat-value">{profileData?.progress?.words_learned_total ?? wordsLearned}</span>
+                  <span className="stat-value">{wordsLearned}</span>
                 </div>
                 <div className="stat">
                   <span className="stat-label">Заработано энергии</span>
-                  <span className="stat-value">+{profileData?.progress?.energy ?? 0}</span>
+                  <span className="stat-value">+{energy}</span>
                 </div>
                 <div className="stat">
                   <span className="stat-label">Заработано монет</span>
-                  <span className="stat-value">+{profileData?.progress?.coins ?? coins}</span>
+                  <span className="stat-value">+{coins}</span>
                 </div>
               </div>
             </div>

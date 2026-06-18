@@ -22,7 +22,7 @@ import {
   getUserInactivity,
   sendAdminMessage,
 } from '../controllers/users.controller.js';
-import { getAdminChats } from '../controllers/messages.controller.js';
+import { getAdminChats, getAdminChatThread } from '../controllers/messages.controller.js';
 import { verifyToken } from '../middleware/auth.js';
 import { isAdmin } from '../middleware/admin.js';
 
@@ -38,8 +38,8 @@ router.get('/user/:id', getUserDetails);
 router.get('/ranking', getRanking);
 router.post('/ranking/reorder', reorderRanking);
 router.get('/chats', getAdminChats);
+router.get('/chats/:id', getAdminChatThread);
 // Teachers
-router.get('/teachers', getTeachers);
 router.post('/teachers', createTeacher);
 router.put('/teachers/:id', updateTeacher);
 router.delete('/teachers/:id', deleteTeacher);

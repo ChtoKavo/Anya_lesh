@@ -20,6 +20,7 @@ import {
   deleteShopItem,
   reorderRanking,
   getChats,
+  getChatThread,
   banUser,
   unbanUser,
   getUserInactivity,
@@ -49,10 +50,13 @@ const AdminPanel = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [responseModal, setResponseModal] = useState(null);
   const [responseText, setResponseText] = useState('');
+  const [activeChatThread, setActiveChatThread] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatReplyText, setChatReplyText] = useState('');
 
   useEffect(() => {
     const userRole = String(localStorage.getItem('userRole') || '').toLowerCase().trim();
-    if (userRole !== 'admin') {
+    if (!['admin', 'owner_admin'].includes(userRole)) {
       navigate('/dashboard');
     }
   }, [navigate]);
@@ -92,7 +96,11 @@ const AdminPanel = () => {
         setStats(data);
       } else if (activeTab === 'shop') {
         const data = await getShopItems();
-        setShopItems(data.items || []);
+        const items = (data.items || []).map(item => ({
+          ...item,
+          metadata: typeof item.metadata === 'string' ? JSON.parse(item.metadata || '{}') : item.metadata || {},
+        }));
+        setShopItems(items);
       } else if (activeTab === 'chats') {
         const data = await getChats();
         // simple mapping: threads
@@ -137,8 +145,8 @@ const AdminPanel = () => {
   };
 
   // Shop handlers
-  const openAddShopModal = () => { setShopForm({ name: '', price: 0 }); setShowShopModal(true); };
-  const openEditShopModal = (it) => { setShopForm({ ...it }); setShowShopModal(true); };
+  const openAddShopModal = () => { setShopForm({ name: '', price: 0, image: '' }); setShowShopModal(true); };
+  const openEditShopModal = (it) => { setShopForm({ name: it.name || '', price: it.price || 0, image: it.image || it.metadata?.image || '', id: it.id }); setShowShopModal(true); };
   const handleDeleteShopItem = async (it) => {
     if (!confirm('Удалить товар?')) return;
     try {
@@ -152,15 +160,69 @@ const AdminPanel = () => {
   const submitShopForm = async () => {
     try {
       if (!shopForm) return;
+      if (!shopForm.name?.trim()) {
+        return alert('Введите название товара');
+      }
+      if (Number.isNaN(Number(shopForm.price)) || shopForm.price < 0) {
+        return alert('Введите корректную цену');
+      }
+      const payload = {
+        name: shopForm.name,
+        price: Number(shopForm.price),
+        metadata: {
+          image: shopForm.image?.trim() || null,
+        },
+      };
       if (shopForm.id) {
-        await updateShopItem(shopForm.id, { name: shopForm.name, price: shopForm.price });
+        await updateShopItem(shopForm.id, payload);
       } else {
-        await createShopItem({ name: shopForm.name, price: shopForm.price });
+        await createShopItem(payload);
       }
       setShowShopModal(false);
       setShopForm(null);
       loadData();
     } catch (e) { alert('Ошибка при сохранении товара: ' + e.message); }
+  };
+
+  const openChatThread = async (thread) => {
+    setActiveChatThread(thread);
+    setChatMessages([]);
+    setChatReplyText('');
+    setError('');
+    try {
+      const data = await getChatThread(thread.id);
+      setChatMessages(data.messages || []);
+    } catch (e) {
+      setError('Не удалось загрузить чат: ' + (e.message || e));
+    }
+  };
+
+  const closeChatThread = () => {
+    setActiveChatThread(null);
+    setChatMessages([]);
+    setChatReplyText('');
+  };
+
+  const handleReplyToChat = async () => {
+    if (!activeChatThread || !chatReplyText.trim()) {
+      return alert('Введите текст сообщения');
+    }
+
+    const adminId = Number(localStorage.getItem('userId')) || null;
+    const targetId = activeChatThread.participantIds.find(id => id !== adminId) || activeChatThread.participantIds[0];
+    if (!targetId) {
+      return alert('Не удалось определить получателя сообщения');
+    }
+
+    try {
+      await sendAdminMessage(targetId, { text: chatReplyText });
+      setChatReplyText('');
+      const data = await getChatThread(activeChatThread.id);
+      setChatMessages(data.messages || []);
+      alert('Сообщение отправлено');
+    } catch (e) {
+      alert('Ошибка при отправке сообщения: ' + (e.message || e));
+    }
   };
 
   // Ranking move handlers
@@ -538,9 +600,14 @@ const AdminPanel = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {shopItems.map(it => (
                   <div key={it.id} className="user-list-item">
-                    <div style={{ flex: 1 }}>
-                      <p style={{ fontWeight: 600 }}>{it.name}</p>
-                      <p style={{ color: '#5a7a9a' }}>Цена: {it.price}</p>
+                    <div style={{ flex: 1, display: 'flex', gap: 12, alignItems: 'center' }}>
+                      { (it.image || it.metadata?.image) && (
+                        <img src={it.image || it.metadata?.image} alt={it.name} style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8 }} />
+                      ) }
+                      <div>
+                        <p style={{ fontWeight: 600 }}>{it.name}</p>
+                        <p style={{ color: '#5a7a9a' }}>Цена: {it.price}</p>
+                      </div>
                     </div>
                     <div style={{ display: 'flex', gap: 8 }}>
                       <button className="user-item-btn" onClick={() => openEditShopModal(it)}>Ред.</button>
@@ -556,6 +623,7 @@ const AdminPanel = () => {
           {activeTab === 'chats' && !loading && (
             <div className="admin-cards-container">
               <h2 className="section-title">Чаты и модерация</h2>
+              {error && <div className="admin-error-message">{error}</div>}
               <div className="chat-threads-container">
                 {chats.length === 0 && <p>Нет доступных чатов для просмотра.</p>}
                 {chats.map(thread => (
@@ -566,8 +634,8 @@ const AdminPanel = () => {
                         <p className="chat-thread-meta">Участников: {thread.participants?.length || 0} • Сообщений: {thread.messageCount || '-'}</p>
                       </div>
                       <div className="chat-thread-actions">
-                        <button className="support-respond-btn" onClick={() => alert('Открыть чат: ' + thread.id)}>Открыть</button>
-                        <button className="support-respond-btn" onClick={() => { if (confirm('Пометить сообщения как платные?')) { alert('Помечено'); } }}>Монетизация</button>
+                        <button className="support-respond-btn" onClick={() => openChatThread(thread)}>Открыть</button>
+                        <button className="support-respond-btn" onClick={() => { if (confirm('Пометить сообщения как платные?')) { alert('Пока не реализовано'); } }}>Монетизация</button>
                       </div>
                     </div>
                   </div>
@@ -577,6 +645,45 @@ const AdminPanel = () => {
           )}
         </div>
       </main>
+
+      {/* Чат модаль */}
+      {activeChatThread && (
+        <div className="admin-modal-overlay" onClick={closeChatThread}>
+          <div className="admin-modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 820, width: '100%' }}>
+            <button className="admin-modal-close" onClick={closeChatThread}>X</button>
+            <h2>Чат: {activeChatThread.title || activeChatThread.id}</h2>
+            <div className="chat-thread-messages" style={{ maxHeight: '420px', overflowY: 'auto', marginBottom: 16, border: '1px solid #d2d8e3', borderRadius: 12, padding: 12, background: '#f8fafc' }}>
+              {chatMessages.length === 0 ? (
+                <p style={{ color: '#5a7a9a' }}>Нет сообщений в этой теме.</p>
+              ) : chatMessages.map(msg => (
+                <div key={msg.id} className="chat-message-item" style={{ marginBottom: 10, display: 'flex', flexDirection: msg.from_user_id === Number(localStorage.getItem('userId')) ? 'row-reverse' : 'row' }}>
+                  <div style={{ maxWidth: '80%' }}>
+                    <div style={{ marginBottom: 4, fontSize: 12, color: '#6c7a89' }}>
+                      {msg.from_user_id === Number(localStorage.getItem('userId')) ? 'Админ' : 'Пользователь'} • {new Date(msg.created_at).toLocaleString()}
+                    </div>
+                    <div style={{ background: msg.from_user_id === Number(localStorage.getItem('userId')) ? '#d4f0ff' : '#ffffff', padding: 10, borderRadius: 12, border: '1px solid #d2d8e3' }}>
+                      {msg.text}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <textarea
+                value={chatReplyText}
+                onChange={(e) => setChatReplyText(e.target.value)}
+                placeholder="Ответ администратора"
+                rows={4}
+                style={{ width: '100%', resize: 'vertical', padding: 12, borderRadius: 10, border: '1px solid #cbd5e0' }}
+              />
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                <button className="btn-submit" onClick={handleReplyToChat}>Отправить ответ</button>
+                <button className="btn-cancel" onClick={closeChatThread}>Закрыть</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Модаль пользователя */}
       {selectedUser && (
@@ -650,6 +757,7 @@ const AdminPanel = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <input value={shopForm?.name || ''} onChange={(e) => setShopForm(f => ({ ...f, name: e.target.value }))} placeholder="Название" />
               <input type="number" value={shopForm?.price || 0} onChange={(e) => setShopForm(f => ({ ...f, price: Number(e.target.value) }))} placeholder="Цена" />
+              <input value={shopForm?.image || ''} onChange={(e) => setShopForm(f => ({ ...f, image: e.target.value }))} placeholder="URL изображения" />
               <div style={{ display: 'flex', gap: 8 }}>
                 <button className="btn-submit" onClick={submitShopForm}>Сохранить</button>
                 <button className="btn-cancel" onClick={() => { setShowShopModal(false); setShopForm(null); }}>Отмена</button>

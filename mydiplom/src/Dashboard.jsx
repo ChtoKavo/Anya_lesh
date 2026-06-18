@@ -7,7 +7,7 @@ import Logo from './Logo';
 import Footer from './Footer';
 import Toast from './Toast';
 import { getTodayTasks, getUserStats, getTopUsers, fetchProfile } from './apiClient';
-import { loadJourneyProfile } from './userJourney';
+import { loadJourneyProfile, updateJourneyProfile, getCurrentTasks } from './userJourney';
 import OnboardingTour from './OnboardingTour';
 
 const Dashboard = () => {
@@ -19,17 +19,21 @@ const Dashboard = () => {
   const [petName, setPetName] = useState(() => localStorage.getItem('userName') || 'Персонаж');
   const [userRole, setUserRole] = useState(() => localStorage.getItem('userRole') || 'user');
   const isAdmin = userRole === 'admin';
+  const [inventoryItems, setInventoryItems] = useState(() => loadJourneyProfile()?.inventory?.items || []);
   const [showTour, setShowTour] = useState(false);
   const [shopItems, setShopItems] = useState([
     { id: 1, name: 'Волшебное зелье', price: 150, image: '/zelka.png', purchased: false },
     { id: 2, name: 'Кристалл силы', price: 300, image: '/cristal.png', purchased: false },
     { id: 3, name: 'Драконья чешуя', price: 500, image: '/dragon cheshuya.png', purchased: false },
     { id: 4, name: 'Золотое яблоко', price: 750, image: '/apply.png', purchased: false }
+    ,
+    { id: 5, name: 'Сердце жизни', price: 10, image: '/heart.png', type: 'life', purchased: false }
   ]);
 
   const [clouds, setClouds] = useState([]);
   const [todayTask, setTodayTask] = useState(null);
   const [todayLoading, setTodayLoading] = useState(false);
+  const [upcomingTasks, setUpcomingTasks] = useState([]);
   const [toast, setToast] = useState(null);
   const [topUsers, setTopUsers] = useState([]);
 
@@ -65,11 +69,30 @@ const Dashboard = () => {
     fetchProfile().then(data => {
       if (data?.user) {
         const name = data.user.pets?.[0]?.name || data.user.nickname || data.user.name || 'Персонаж';
+        const role = (data.user.role || 'user').toLowerCase().trim();
         setPetName(name);
+        setUserRole(role);
         localStorage.setItem('userName', name);
+        localStorage.setItem('userRole', role);
         if (data.progress) {
-          setCoins(data.progress.coins || 0);
-          setEnergy(data.progress.energy || 100);
+          const localJourney = loadJourneyProfile() || {};
+          const remoteInventory = data.progress.inventory || localJourney.inventory || { items: [], equipped: {} };
+          const inventory = typeof remoteInventory === 'string' ? JSON.parse(remoteInventory) : remoteInventory;
+          const updatedProfile = updateJourneyProfile({
+            ...localJourney,
+            coins: data.progress.coins ?? localJourney.coins ?? 0,
+            energy: data.progress.energy ?? localJourney.energy ?? 100,
+            lives: data.progress.lives ?? localJourney.lives ?? 3,
+            inventory
+          });
+
+          setCoins(updatedProfile.coins || 0);
+          setEnergy(updatedProfile.energy ?? 100);
+          setInventoryItems(updatedProfile.inventory?.items || []);
+          setShopItems((currentItems) => currentItems.map(item => ({
+            ...item,
+            purchased: Array.isArray(updatedProfile.inventory?.items) && updatedProfile.inventory.items.includes(item.id)
+          })));
         }
       }
     }).catch(err => console.warn('Dashboard: fetchProfile error', err));
@@ -81,6 +104,16 @@ const Dashboard = () => {
       // ignore quietly
       console.warn('Failed to load today tasks', err.message || err);
     }).finally(() => setTodayLoading(false));
+
+    // Load upcoming tasks from userJourney
+    try {
+      const { tasks } = getCurrentTasks();
+      const uncompletedTasks = tasks.filter(t => !t.completed);
+      setUpcomingTasks(uncompletedTasks);
+    } catch (err) {
+      console.warn('Failed to load upcoming tasks', err);
+      setUpcomingTasks([]);
+    }
   }, []);
 
   useEffect(() => {
@@ -106,8 +139,7 @@ const Dashboard = () => {
 
   const emotions = [
     { id: 'happy', name: 'счастье', image: '/happy1.jpeg' },
-    { id: 'sad', name: 'грусть', image: '/sad1.jpeg' },
-    { id: 'weak', name: 'злость', image: '/bad1.jpeg' }
+    { id: 'sad', name: 'грусть', image: '/sad1.jpeg' }
   ];
 
   const growthStages = [
@@ -142,13 +174,27 @@ const Dashboard = () => {
       });
       return;
     }
-    
-    setCoins(coins - item.price);
+    const currentProfile = loadJourneyProfile() || {};
+    const currentInventory = Array.isArray(currentProfile.inventory?.items) ? currentProfile.inventory.items : [];
+    const inventory = {
+      ...(currentProfile.inventory || { items: [], equipped: {} }),
+      items: [...new Set([...currentInventory, itemId])]
+    };
+    const updatedProfile = updateJourneyProfile({
+      ...currentProfile,
+      coins: (currentProfile.coins ?? coins) - item.price,
+      lives: item.type === 'life' ? ((currentProfile.lives ?? 0) + 1) : (currentProfile.lives ?? 0),
+      inventory
+    });
+
+    setInventoryItems(updatedProfile.inventory?.items || []);
+    setCoins(updatedProfile.coins || 0);
+    setEnergy(updatedProfile.energy ?? energy);
     setShopItems(shopItems.map(i => 
       i.id === itemId ? { ...i, purchased: true } : i
     ));
     setToast({ 
-      message: `${item.name} успешно куплен! 🎉`, 
+      message: `${item.name} успешно куплен! ${item.type === 'life' ? '+1 жизнь' : ''} 🎉`, 
       type: 'success' 
     });
   };
@@ -218,10 +264,10 @@ const Dashboard = () => {
             <button className="nav-link" onClick={handleGoToPractice}>Урок</button>
             <button className="nav-link" onClick={handleGoToTasks}>Задания</button>
             <button className="nav-link" onClick={handleGoToFriends}>Друзья</button>
-            {userRole === 'teacher' && (
+            {['teacher', 'admin', 'owner_admin'].includes(userRole) && (
               <button className="nav-link" onClick={() => navigate('/teacher')}>Учитель</button>
             )}
-            {isAdmin && (
+            {['admin', 'owner_admin'].includes(userRole) && (
               <button className="nav-link" onClick={() => navigate('/admin')}>Админка</button>
             )}
           </nav>
@@ -235,10 +281,36 @@ const Dashboard = () => {
         <div className="dashboard-content">
 
           <div className="today-block">
-            <div className="today-card">
-              <h3 className="today-title">Задание на сегодня</h3>
-              <p className="today-task">Выучить 10 новых слов по теме "Путешествия"</p>
-              <button className="today-btn" onClick={handleGoToTasks}>Выполнить →</button>
+            <div className="tasks-list-card">
+              <h3 className="today-title">Следующие задания</h3>
+              {upcomingTasks.length === 0 ? (
+                <div className="no-tasks-message">
+                  <p>Все задания выполнены! 🎉</p>
+                </div>
+              ) : (
+                <div className="tasks-list">
+                  {upcomingTasks.slice(0, 1).map((task) => (
+                    <div key={task.id} className="task-item">
+                      <div className="task-header">
+                        <h4 className="task-title">{task.title}</h4>
+                      </div>
+                      <p className="task-description">{task.description}</p>
+                      <div className="task-rewards">
+                        <span className="reward-item">
+                          <img src="/money.png" alt="coins" className="reward-icon" /> {task.coinReward}
+                        </span>
+                        <span className="reward-item">
+                          <img src="/energy2.png" alt="energy" className="reward-icon" /> {task.energyReward}
+                        </span>
+                        <span className="reward-item">
+                          
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button className="today-btn today-btn-bottom" onClick={handleGoToTasks}>Выполнить все →</button>
             </div>
             <div className="rank-card">
               <h3 className="rank-title">Уровень рейтинга</h3>
@@ -285,7 +357,7 @@ const Dashboard = () => {
                 <h3 className="section-title">Персонаж</h3>
                 <div className="emotions-container">
                   {emotions.map(emotion => {
-                    const videoSrc = emotion.id === 'happy' ? '/happyvideo.mp4' : emotion.id === 'sad' ? '/sadvideo1.mp4' : '/angryvideo1.mp4';
+                    const videoSrc = emotion.id === 'happy' ? '/happyvideo.mp4' : emotion.id === 'sad' ? '/sadvideo1.mp4' : null;
                     return (
                       <div 
                         key={emotion.id}
